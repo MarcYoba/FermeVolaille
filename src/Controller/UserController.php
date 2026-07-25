@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class UserController extends AbstractController
 {
-    #[Route('/user/creation/compte', name: 'app_user')]
+    #[Route('/admin/user/creation/compte', name: 'app_user')]
     public function index(EntityManagerInterface $em, Request $request, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $user = new User();
@@ -35,7 +35,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/liste', name: 'app_user_liste')]
+    #[Route('/admin/user/liste', name: 'app_user_liste')]
     public function liste(EntityManagerInterface $em): Response
     {
         $users = $em->getRepository(User::class)->findAll();
@@ -45,7 +45,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/edit/{id}', name: 'app_user_edit')]
+    #[Route('/admin/user/edit/{id}', name: 'app_user_edit')]
     public function edit(EntityManagerInterface $em, Request $request, int $id): Response
     {
         $user = $em->getRepository(User::class)->find($id);
@@ -66,7 +66,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/delete/{id}', name: 'app_user_delete')]
+    #[Route('/admin/user/delete/{id}', name: 'app_user_delete')]
     public function delete(EntityManagerInterface $em, int $id): Response
     {
         $user = $em->getRepository(User::class)->find($id);

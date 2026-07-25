@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -42,6 +44,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $telephone = null;
+
+    /**
+     * @var Collection<int, Fermes>
+     */
+    #[ORM\OneToMany(targetEntity: Fermes::class, mappedBy: 'user')]
+    private Collection $fermes;
+
+    public function __construct()
+    {
+        $this->fermes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -156,6 +169,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Fermes>
+     */
+    public function getFermes(): Collection
+    {
+        return $this->fermes;
+    }
+
+    public function addFerme(Fermes $ferme): static
+    {
+        if (!$this->fermes->contains($ferme)) {
+            $this->fermes->add($ferme);
+            $ferme->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFerme(Fermes $ferme): static
+    {
+        if ($this->fermes->removeElement($ferme)) {
+            // set the owning side to null (unless already changed)
+            if ($ferme->getUser() === $this) {
+                $ferme->setUser(null);
+            }
+        }
 
         return $this;
     }
