@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserController!{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+<section class="vh-100" style="background-color: #eee;">
+  <div class="container h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-lg-12 col-xl-11">
+        <div class="card text-black" style="border-radius: 25px;">
+          <div class="card-body p-md-5">
+            <div class="row justify-content-center">
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Localisation</th>
+                            <th scope="col">Telephone</th>
+                            <th scope="col">Capacite</th>
+                            <th scope="col">Nombre Batiments</th>
+                            <th scope="col">Operation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ferme in fermes %}
+                            <tr>
+                                <th scope="row">{{ ferme.id }}</th>
+                                <td>{{ ferme.nom }}</td>
+                                <td>{{ ferme.localisation }}</td>
+                                <td>{{ ferme.telephone }}</td>
+                                <td>{{ ferme.capacite }}</td>
+                                <td>{{ ferme.nombreBatiments }}</td>
+                                <td>
+                                    <a href="{{ path('app_fremes_edit', {'id': ferme.id}) }}" class="btn btn-primary">Edit</a>
+                                    <a href="{{ path('app_fermes_delete', {'id': ferme.id}) }}" class="btn btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

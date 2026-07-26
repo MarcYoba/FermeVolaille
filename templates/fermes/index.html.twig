@@ -3,18 +3,74 @@
 {% block title %}Hello FermesController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+{% include "navbar.html.twig" %}
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+{# Première section d'arrière-plan #}
+<section class="vh-100" style="background-color: #9A616D;">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-10">
+        <div class="card" style="border-radius: 1rem;">
+          
+          {# Deuxième section (formulaire) emboîtée correctement #}
+          <section class="h-100 gradient-form" style="background-color: #eee; border-radius: 1rem;">
+            <div class="container py-5 h-100">
+              <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-xl-12">
+                  <div class="card rounded-3 text-black">
+                    
+                      
+                      {# Colonne Formulaire #}
+                      <div class="col-lg-12">
+                        <div class="card-body p-md-5 mx-md-4">
+                          <h3 class="text-center">infortion de la fermes </h3>
+                          {{ form_errors(form) }}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/FermeVolaille/src/Controller/FermesController.php</code></li>
-        <li>Your template at <code>D:/FermeVolaille/templates/fermes/index.html.twig</code></li>
-    </ul>
-</div>
+                          {{ form_start(form) }}
+
+                            
+
+                            <div class="form-group row">
+                              <div data-mdb-input-init class="form-outline  col-md-6">
+                              {{ form_row(form.nom) }}
+                              </div>
+                              <div data-mdb-input-init class="form-outline  col-md-6">
+                                {{ form_row(form.localisation) }}
+                              </div>
+                              <div data-mdb-input-init class="form-outline  col-md-6">
+                                {{ form_row(form.responsable) }}
+                              </div>
+                              <div data-mdb-input-init class="form-outline  col-md-6">
+                                {{ form_row(form.telephone) }}
+                              </div>
+                              <div data-mdb-input-init class="form-outline  col-md-6">
+                                {{ form_row(form.capacite) }}
+                              </div>
+                              <div data-mdb-input-init class="form-outline  col-md-6">
+                                {{ form_row(form.nombreBatiments) }}
+                              </div>
+                            </div>
+                            
+                            <br>
+                            <div class="text-center pt-1 mb-5 pb-1">
+                              <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="submit" >
+                                Enregistrement
+                              </button>
+                            </div>
+
+                          {{ form_end(form) }}
+
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
