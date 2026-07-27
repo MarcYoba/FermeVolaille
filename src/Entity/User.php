@@ -63,11 +63,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Magasin::class, mappedBy: 'user')]
     private Collection $magasins;
 
+    /**
+     * @var Collection<int, Achat>
+     */
+    #[ORM\OneToMany(targetEntity: Achat::class, mappedBy: 'relation')]
+    private Collection $achats;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
         $this->produits = new ArrayCollection();
         $this->magasins = new ArrayCollection();
+        $this->achats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -271,6 +278,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($magasin->getUser() === $this) {
                 $magasin->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Achat>
+     */
+    public function getAchats(): Collection
+    {
+        return $this->achats;
+    }
+
+    public function addAchat(Achat $achat): static
+    {
+        if (!$this->achats->contains($achat)) {
+            $this->achats->add($achat);
+            $achat->setRelation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAchat(Achat $achat): static
+    {
+        if ($this->achats->removeElement($achat)) {
+            // set the owning side to null (unless already changed)
+            if ($achat->getRelation() === $this) {
+                $achat->setRelation(null);
             }
         }
 
