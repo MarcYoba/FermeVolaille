@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bloc{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+{# Première section d'arrière-plan #}
+<section class="vh-100" style="background-color: #9A616D;">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-10">
+        <div class="card" style="border-radius: 1rem;">
+          
+          {# Deuxième section (formulaire) emboîtée correctement #}
+          <section class="h-100 gradient-form" style="background-color: #eee; border-radius: 1rem;">
+            <div class="container py-5 h-100">
+              <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-xl-12">
+                  <div class="card rounded-3 text-black">
+                    
+                      
+                      {# Colonne Formulaire #}
+                      <div class="col-lg-12">
+                        <div class="card-body p-md-5 mx-md-4">
+                          <h3 class="text-center">Information du Bloc </h3>
+                          {{ form_errors(form) }}
+
+                          {{ form_start(form) }}
+                            <div class="form-group row">
+                              <div data-mdb-input-init class="form-outline  col-md-6">
+                              {{ form_row(form.batiment) }}
+                              </div>
+                              <div data-mdb-input-init class="form-outline  col-md-6">
+                                {{ form_row(form.description) }}
+                              </div>
+                              <div data-mdb-input-init class="form-outline  col-md-6">
+                                {{ form_row(form.createtAt) }}
+                              </div>
+                              
+                            </div>
+                            
+                            <br>
+                            <div class="text-center pt-1 mb-5 pb-1">
+                              <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="submit" >
+                                Enregistrement
+                              </button>
+                            </div>
+
+                          {{ form_end(form) }}
+
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
