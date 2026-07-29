@@ -69,12 +69,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Achat::class, mappedBy: 'relation')]
     private Collection $achats;
 
+    /**
+     * @var Collection<int, Bloc>
+     */
+    #[ORM\OneToMany(targetEntity: Bloc::class, mappedBy: 'user')]
+    private Collection $blocs;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
         $this->produits = new ArrayCollection();
         $this->magasins = new ArrayCollection();
         $this->achats = new ArrayCollection();
+        $this->blocs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -308,6 +315,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($achat->getRelation() === $this) {
                 $achat->setRelation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bloc>
+     */
+    public function getBlocs(): Collection
+    {
+        return $this->blocs;
+    }
+
+    public function addBloc(Bloc $bloc): static
+    {
+        if (!$this->blocs->contains($bloc)) {
+            $this->blocs->add($bloc);
+            $bloc->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBloc(Bloc $bloc): static
+    {
+        if ($this->blocs->removeElement($bloc)) {
+            // set the owning side to null (unless already changed)
+            if ($bloc->getUser() === $this) {
+                $bloc->setUser(null);
             }
         }
 
