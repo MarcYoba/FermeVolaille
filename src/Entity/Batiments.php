@@ -38,6 +38,9 @@ class Batiments
     #[ORM\ManyToOne(inversedBy: 'batiments')]
     private ?User $user = null;
 
+    #[ORM\ManyToOne(inversedBy: 'batiments')]
+    private ?Bloc $bloc = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +138,18 @@ class Batiments
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getBloc(): ?Bloc
+    {
+        return $this->bloc;
+    }
+
+    public function setBloc(?Bloc $bloc): static
+    {
+        $this->bloc = $bloc;
 
         return $this;
     }

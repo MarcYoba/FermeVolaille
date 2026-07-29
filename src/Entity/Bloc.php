@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BlocRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,17 @@ class Bloc
 
     #[ORM\ManyToOne(inversedBy: 'blocs')]
     private ?User $user = null;
+
+    /**
+     * @var Collection<int, Batiments>
+     */
+    #[ORM\OneToMany(targetEntity: Batiments::class, mappedBy: 'bloc')]
+    private Collection $batiments;
+
+    public function __construct()
+    {
+        $this->batiments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +88,36 @@ class Bloc
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Batiments>
+     */
+    public function getBatiments(): Collection
+    {
+        return $this->batiments;
+    }
+
+    public function addBatiment(Batiments $batiment): static
+    {
+        if (!$this->batiments->contains($batiment)) {
+            $this->batiments->add($batiment);
+            $batiment->setBloc($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBatiment(Batiments $batiment): static
+    {
+        if ($this->batiments->removeElement($batiment)) {
+            // set the owning side to null (unless already changed)
+            if ($batiment->getBloc() === $this) {
+                $batiment->setBloc(null);
+            }
+        }
 
         return $this;
     }

@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Batiments;
+use App\Entity\Bloc;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -53,6 +55,14 @@ class BatimentType extends AbstractType
                 'label' => 'Etat du bâtiments',
                 'attr' => [
                     'placeholder' => 'Entrez la Etat du bâtiments',
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('bloc', EntityType::class,[
+                'label' => 'Choix le Bloc',
+                'class' => Bloc::class,
+                'choice_label' => 'description',
+                'attr' => [
                     'class' => 'form-control',
                 ],
             ])
