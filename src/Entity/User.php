@@ -87,6 +87,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: MagasinDedier::class, mappedBy: 'user')]
     private Collection $magasinDediers;
 
+    /**
+     * @var Collection<int, Bandes>
+     */
+    #[ORM\OneToMany(targetEntity: Bandes::class, mappedBy: 'user')]
+    private Collection $bandes;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -96,6 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->blocs = new ArrayCollection();
         $this->batiments = new ArrayCollection();
         $this->magasinDediers = new ArrayCollection();
+        $this->bandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -419,6 +426,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($magasinDedier->getUser() === $this) {
                 $magasinDedier->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bandes>
+     */
+    public function getBandes(): Collection
+    {
+        return $this->bandes;
+    }
+
+    public function addBande(Bandes $bande): static
+    {
+        if (!$this->bandes->contains($bande)) {
+            $this->bandes->add($bande);
+            $bande->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBande(Bandes $bande): static
+    {
+        if ($this->bandes->removeElement($bande)) {
+            // set the owning side to null (unless already changed)
+            if ($bande->getUser() === $this) {
+                $bande->setUser(null);
             }
         }
 

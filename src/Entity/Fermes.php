@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FermesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FermesRepository::class)]
@@ -33,6 +35,17 @@ class Fermes
 
     #[ORM\ManyToOne(inversedBy: 'fermes')]
     private ?User $user = null;
+
+    /**
+     * @var Collection<int, Bandes>
+     */
+    #[ORM\OneToMany(targetEntity: Bandes::class, mappedBy: 'ferme')]
+    private Collection $bandes;
+
+    public function __construct()
+    {
+        $this->bandes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -119,6 +132,36 @@ class Fermes
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bandes>
+     */
+    public function getBandes(): Collection
+    {
+        return $this->bandes;
+    }
+
+    public function addBande(Bandes $bande): static
+    {
+        if (!$this->bandes->contains($bande)) {
+            $this->bandes->add($bande);
+            $bande->setFerme($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBande(Bandes $bande): static
+    {
+        if ($this->bandes->removeElement($bande)) {
+            // set the owning side to null (unless already changed)
+            if ($bande->getFerme() === $this) {
+                $bande->setFerme(null);
+            }
+        }
 
         return $this;
     }

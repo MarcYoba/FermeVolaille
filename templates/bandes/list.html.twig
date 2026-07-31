@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bandes{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+<section class="vh-100" style="background-color: #eee;">
+  <div class="container h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-lg-12 col-xl-11">
+        <div class="card text-black" style="border-radius: 25px;">
+          <div class="card-body p-md-5">
+            <div class="row justify-content-center">
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Matricule</th>
+                            <th scope="col">Souche</th>
+                            <th scope="col">Fournisseur</th>
+                            <th scope="col">date Mise Place</th>
+                            <th scope="col">Poussins</th>
+                            <th scope="col">Prix</th>
+                            <th scope="col">Poids</th>
+                            <th scope="col">Date Abattage</th>
+                            <th scope="col">Batiments</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Operation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bande in bandes %}
+                            <tr>
+                                <th scope="row">{{ bande.id }}</th>
+                                <td>{{ bande.matricule }}</td>
+                                <td>{{ bande.souche }}</td>
+                                <td>{{ bande.fournisseur }}</td>
+                                <td>{{ bande.dateMisePlace | date('Y-m-d') }}</td>
+                                <td>{{ bande.poussins }}</td>
+                                <td>{{ bande.prix}}</td>
+                                <td>{{ bande.poids}}</td>
+                                <td>{{ bande.dateAbattage | date('Y-m-d') }}</td>
+                                <td>{{ bande.batiments.nom}}</td>
+                                <td scope="col">{{bande.status}}</td>
+                                <td>
+                                    <a href="{{ path('app_bandes_edit', {'id': bande.id}) }}" class="btn btn-primary">Edit</a>
+                                    <a href="{{ path('app_bandes_delete', {'id': bande.id}) }}" class="btn btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

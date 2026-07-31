@@ -49,9 +49,16 @@ class Batiments
     #[ORM\OneToMany(targetEntity: MagasinDedier::class, mappedBy: 'batiment')]
     private Collection $magasinDediers;
 
+    /**
+     * @var Collection<int, Bandes>
+     */
+    #[ORM\OneToMany(targetEntity: Bandes::class, mappedBy: 'batiments')]
+    private Collection $bandes;
+
     public function __construct()
     {
         $this->magasinDediers = new ArrayCollection();
+        $this->bandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -191,6 +198,36 @@ class Batiments
             // set the owning side to null (unless already changed)
             if ($magasinDedier->getBatiment() === $this) {
                 $magasinDedier->setBatiment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bandes>
+     */
+    public function getBandes(): Collection
+    {
+        return $this->bandes;
+    }
+
+    public function addBande(Bandes $bande): static
+    {
+        if (!$this->bandes->contains($bande)) {
+            $this->bandes->add($bande);
+            $bande->setBatiments($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBande(Bandes $bande): static
+    {
+        if ($this->bandes->removeElement($bande)) {
+            // set the owning side to null (unless already changed)
+            if ($bande->getBatiments() === $this) {
+                $bande->setBatiments(null);
             }
         }
 
