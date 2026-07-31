@@ -81,6 +81,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Batiments::class, mappedBy: 'user')]
     private Collection $batiments;
 
+    /**
+     * @var Collection<int, MagasinDedier>
+     */
+    #[ORM\OneToMany(targetEntity: MagasinDedier::class, mappedBy: 'user')]
+    private Collection $magasinDediers;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -89,6 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->achats = new ArrayCollection();
         $this->blocs = new ArrayCollection();
         $this->batiments = new ArrayCollection();
+        $this->magasinDediers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -382,6 +389,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($batiment->getUser() === $this) {
                 $batiment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MagasinDedier>
+     */
+    public function getMagasinDediers(): Collection
+    {
+        return $this->magasinDediers;
+    }
+
+    public function addMagasinDedier(MagasinDedier $magasinDedier): static
+    {
+        if (!$this->magasinDediers->contains($magasinDedier)) {
+            $this->magasinDediers->add($magasinDedier);
+            $magasinDedier->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMagasinDedier(MagasinDedier $magasinDedier): static
+    {
+        if ($this->magasinDediers->removeElement($magasinDedier)) {
+            // set the owning side to null (unless already changed)
+            if ($magasinDedier->getUser() === $this) {
+                $magasinDedier->setUser(null);
             }
         }
 

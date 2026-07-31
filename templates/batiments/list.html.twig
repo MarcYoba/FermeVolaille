@@ -21,6 +21,7 @@
                             <th scope="col">Capacite</th>
                             <th scope="col">Type</th>
                             <th scope="col">Etat</th>
+                            <th scope="col">Bloc</th>
                             <th scope="col">Date Contruction</th>
                             <th scope="col">Operation</th>
                         </tr>
@@ -34,6 +35,11 @@
                                 <td>{{ batiment.capacite }}</td>
                                 <td>{{ batiment.type }}</td>
                                 <td>{{ batiment.etat }}</td>
+                                <td>
+                                  {# {% for bloc in batiment.bloc %} #}
+                                    {{batiment.bloc.description}}
+                                  {# {% endfor %} #}
+                                </td>
                                 <td>{{ batiment.createtAt | date('Y-m-d') }}</td>
                                 <td>
                                     <a href="{{ path('app_batiments_edit', {'id': batiment.id}) }}" class="btn btn-primary">Edit</a>
