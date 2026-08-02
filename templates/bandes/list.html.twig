@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bandes{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<section class="min-vh-100 py-5" style="background-color: #eee;">
+  <div class="container-fluid px-4">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-12">
+        <div class="card shadow-lg border-0" style="border-radius: 15px;">
+          <div class="card-body p-4 p-md-5">
+            
+            {# En-tête : Titre et bouton d'ajout #}
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+              <h3 class="fw-bold mb-0 text-dark">Liste des Bandes</h3>
+              {# Optionnel : Lien pour créer une nouvelle bande (adaptez le nom de la route si besoin) #}
+              <a href="{{ path('app_bandes')|default('#') }}" class="btn btn-success shadow-sm">
+                <i class="fas fa-plus"></i> Nouvelle Bande
+              </a>
+            </div>
+
+            {# Conteneur responsive pour le tableau #}
+            <div class="table-responsive">
+              <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Souche</th>
+                    <th scope="col">Fournisseur</th>
+                    <th scope="col">Mise en Place</th>
+                    <th scope="col">Poussins</th>
+                    <th scope="col">Prix</th>
+                    <th scope="col">Poids</th>
+                    <th scope="col">Date Abattage</th>
+                    <th scope="col">Bâtiment</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col" class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for bande in bandes %}
+                    <tr>
+                      <th scope="row">{{ bande.id }}</th>
+                      <td class="fw-bold text-primary">{{ bande.matricule }}</td>
+                      <td>{{ bande.souche }}</td>
+                      <td>{{ bande.fournisseur }}</td>
+                      <td>{{ bande.dateMisePlace ? bande.dateMisePlace|date('d/m/Y') : '-' }}</td>
+                      <td>{{ bande.poussins }}</td>
+                      <td>{{ bande.prix }}</td>
+                      <td>{{ bande.poids }}</td>
+                      <td>{{ bande.dateAbattage ? bande.dateAbattage|date('d/m/Y') : 'Non définie' }}</td>
+                      
+                      {# Sécurité au cas où le bâtiment est nul #}
+                      <td>
+                        {% if bande.batiments %}
+                          <span class="badge bg-secondary">{{ bande.batiments.nom }}</span>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+                      
+                      <td>
+                        {# Badge visuel pour le statut #}
+                        <span class="badge {% if bande.status == 'Actif' or bande.status == 'En cours' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                          {{ bande.status }}
+                        </span>
+                      </td>
+                      
+                      <td class="text-center">
+                        <div class="btn-group" role="group">
+                          <a href="{{ path('app_dashboard_bande', {'id': bande.id}) }}" class="btn btn-sm btn-outline-info" title="Voir la Courbe">
+                            Courbe
+                          </a>
+                          <a href="{{ path('app_bandes_edit', {'id': bande.id}) }}" class="btn btn-sm btn-outline-primary" title="Modifier">
+                            Modifier
+                          </a>
+                          <a href="{{ path('app_bandes_delete', {'id': bande.id}) }}" class="btn btn-sm btn-outline-danger" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette bande ?');">
+                            Supprimer
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="12" class="text-center py-4 text-muted">
+                        Aucune bande enregistrée pour le moment.
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

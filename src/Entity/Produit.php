@@ -40,10 +40,17 @@ class Produit
     #[ORM\OneToMany(targetEntity: Achat::class, mappedBy: 'produit')]
     private Collection $achats;
 
+    /**
+     * @var Collection<int, MagasinDedier>
+     */
+    #[ORM\OneToMany(targetEntity: MagasinDedier::class, mappedBy: 'produit')]
+    private Collection $magasinDediers;
+
     public function __construct()
     {
         $this->magasins = new ArrayCollection();
         $this->achats = new ArrayCollection();
+        $this->magasinDediers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -153,6 +160,36 @@ class Produit
             // set the owning side to null (unless already changed)
             if ($achat->getProduit() === $this) {
                 $achat->setProduit(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MagasinDedier>
+     */
+    public function getMagasinDediers(): Collection
+    {
+        return $this->magasinDediers;
+    }
+
+    public function addMagasinDedier(MagasinDedier $magasinDedier): static
+    {
+        if (!$this->magasinDediers->contains($magasinDedier)) {
+            $this->magasinDediers->add($magasinDedier);
+            $magasinDedier->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMagasinDedier(MagasinDedier $magasinDedier): static
+    {
+        if ($this->magasinDediers->removeElement($magasinDedier)) {
+            // set the owning side to null (unless already changed)
+            if ($magasinDedier->getProduit() === $this) {
+                $magasinDedier->setProduit(null);
             }
         }
 

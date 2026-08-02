@@ -81,6 +81,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Batiments::class, mappedBy: 'user')]
     private Collection $batiments;
 
+    /**
+     * @var Collection<int, MagasinDedier>
+     */
+    #[ORM\OneToMany(targetEntity: MagasinDedier::class, mappedBy: 'user')]
+    private Collection $magasinDediers;
+
+    /**
+     * @var Collection<int, Bandes>
+     */
+    #[ORM\OneToMany(targetEntity: Bandes::class, mappedBy: 'user')]
+    private Collection $bandes;
+
+    /**
+     * @var Collection<int, Suivi>
+     */
+    #[ORM\OneToMany(targetEntity: Suivi::class, mappedBy: 'user')]
+    private Collection $suivis;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -89,6 +107,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->achats = new ArrayCollection();
         $this->blocs = new ArrayCollection();
         $this->batiments = new ArrayCollection();
+        $this->magasinDediers = new ArrayCollection();
+        $this->bandes = new ArrayCollection();
+        $this->suivis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -382,6 +403,96 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($batiment->getUser() === $this) {
                 $batiment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MagasinDedier>
+     */
+    public function getMagasinDediers(): Collection
+    {
+        return $this->magasinDediers;
+    }
+
+    public function addMagasinDedier(MagasinDedier $magasinDedier): static
+    {
+        if (!$this->magasinDediers->contains($magasinDedier)) {
+            $this->magasinDediers->add($magasinDedier);
+            $magasinDedier->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMagasinDedier(MagasinDedier $magasinDedier): static
+    {
+        if ($this->magasinDediers->removeElement($magasinDedier)) {
+            // set the owning side to null (unless already changed)
+            if ($magasinDedier->getUser() === $this) {
+                $magasinDedier->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bandes>
+     */
+    public function getBandes(): Collection
+    {
+        return $this->bandes;
+    }
+
+    public function addBande(Bandes $bande): static
+    {
+        if (!$this->bandes->contains($bande)) {
+            $this->bandes->add($bande);
+            $bande->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBande(Bandes $bande): static
+    {
+        if ($this->bandes->removeElement($bande)) {
+            // set the owning side to null (unless already changed)
+            if ($bande->getUser() === $this) {
+                $bande->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Suivi>
+     */
+    public function getSuivis(): Collection
+    {
+        return $this->suivis;
+    }
+
+    public function addSuivi(Suivi $suivi): static
+    {
+        if (!$this->suivis->contains($suivi)) {
+            $this->suivis->add($suivi);
+            $suivi->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSuivi(Suivi $suivi): static
+    {
+        if ($this->suivis->removeElement($suivi)) {
+            // set the owning side to null (unless already changed)
+            if ($suivi->getUser() === $this) {
+                $suivi->setUser(null);
             }
         }
 

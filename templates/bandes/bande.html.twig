@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<div class="container py-4">
+  
+  <!-- En-tête avec Sélecteur de Bande -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h4 class="mb-1 fw-bold">
+          {% if bandeSelectionnee %}
+            Suivi de la Bande : <span class="text-primary">{{ bandeSelectionnee.matricule }}</span>
+          {% else %}
+            Aucune bande enregistrée
+          {% endif %}
+        </h4>
+        <p class="text-muted mb-0">Consultez l'évolution quotidienne spécifique à ce lot.</p>
+      </div>
+
+      <!-- Filtre Liste déroulante -->
+      <div class="d-flex align-items-center">
+        <label for="selectBande" class="me-2 fw-bold mb-0">Changer de bande :</label>
+        <select id="selectBande" class="form-select w-auto" onchange="window.location.href=this.value;">
+          {% for b in toutesLesBandes %}
+            <option value="{{ path('app_dashboard_bande', {'id': b.id}) }}" 
+                    {% if bandeSelectionnee and b.id == bandeSelectionnee.id %}selected{% endif %}>
+              {{ b.matricule }} ({{ b.souche|default('Bande') }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zone du Graphique -->
+  {% if chart %}
+    <div class="card shadow rounded-3">
+      <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center py-3">
+        <span><i class="fas fa-chart-line text-primary me-2"></i>Courbe de performance de la bande</span>
+        {% if bandeSelectionnee %}
+          <span class="badge bg-secondary">Mise en place le : {{ bandeSelectionnee.dateMisePlace|date('d/m/Y') }}</span>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        {{ render_chart(chart) }}
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center">
+      Veuillez créer une bande et ajouter des suivis pour visualiser la courbe.
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

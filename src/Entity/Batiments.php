@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BatimentsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,6 +42,24 @@ class Batiments
 
     #[ORM\ManyToOne(inversedBy: 'batiments')]
     private ?Bloc $bloc = null;
+
+    /**
+     * @var Collection<int, MagasinDedier>
+     */
+    #[ORM\OneToMany(targetEntity: MagasinDedier::class, mappedBy: 'batiment')]
+    private Collection $magasinDediers;
+
+    /**
+     * @var Collection<int, Bandes>
+     */
+    #[ORM\OneToMany(targetEntity: Bandes::class, mappedBy: 'batiments')]
+    private Collection $bandes;
+
+    public function __construct()
+    {
+        $this->magasinDediers = new ArrayCollection();
+        $this->bandes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -150,6 +170,66 @@ class Batiments
     public function setBloc(?Bloc $bloc): static
     {
         $this->bloc = $bloc;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MagasinDedier>
+     */
+    public function getMagasinDediers(): Collection
+    {
+        return $this->magasinDediers;
+    }
+
+    public function addMagasinDedier(MagasinDedier $magasinDedier): static
+    {
+        if (!$this->magasinDediers->contains($magasinDedier)) {
+            $this->magasinDediers->add($magasinDedier);
+            $magasinDedier->setBatiment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMagasinDedier(MagasinDedier $magasinDedier): static
+    {
+        if ($this->magasinDediers->removeElement($magasinDedier)) {
+            // set the owning side to null (unless already changed)
+            if ($magasinDedier->getBatiment() === $this) {
+                $magasinDedier->setBatiment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bandes>
+     */
+    public function getBandes(): Collection
+    {
+        return $this->bandes;
+    }
+
+    public function addBande(Bandes $bande): static
+    {
+        if (!$this->bandes->contains($bande)) {
+            $this->bandes->add($bande);
+            $bande->setBatiments($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBande(Bandes $bande): static
+    {
+        if ($this->bandes->removeElement($bande)) {
+            // set the owning side to null (unless already changed)
+            if ($bande->getBatiments() === $this) {
+                $bande->setBatiments(null);
+            }
+        }
 
         return $this;
     }
