@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# Bloque l'accès aux fichiers/dossiers cachés (.git, .env, etc.)
+RewriteRule (^\.|/\.) - [F]
+
+# Désactive l'affichage de l'index des répertoires
+Options -Indexes
+
+# Réécriture d'URL
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
