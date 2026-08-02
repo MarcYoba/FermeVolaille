@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SuiviController!{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<section class="min-vh-100 py-5" style="background-color: #9A616D;">
+  <div class="container h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-lg-10 col-xl-8">
+        
+        <div class="card rounded-3 text-black shadow-lg">
+          <div class="card-body p-4 p-md-5">
+            
+            <h3 class="text-center mb-4 font-weight-bold">Suivi Quotidien de la Bande</h3>
+
+            {# Affichage des erreurs globales du formulaire #}
+            {{ form_errors(form) }}
+
+            {{ form_start(form) }}
+              
+              <div class="row g-3">
+                {# Date et Âge #}
+                <div class="col-md-6">
+                  {{ form_row(form.createtAt) }}
+                </div>
+                <div class="col-md-6">
+                  {{ form_row(form.age) }}
+                </div>
+
+                {# Température et Humidité #}
+                <div class="col-md-6">
+                  {{ form_row(form.temperature) }}
+                </div>
+                <div class="col-md-6">
+                  {{ form_row(form.humidite) }}
+                </div>
+
+                {# Consommations #}
+                <div class="col-md-6">
+                  {{ form_row(form.consommationAliment) }}
+                </div>
+                <div class="col-md-6">
+                  {{ form_row(form.consommationEau) }}
+                </div>
+
+                {# Perte & Écarts #}
+                <div class="col-md-6">
+                  {{ form_row(form.nombreMorts) }}
+                </div>
+                <div class="col-md-6">
+                  {{ form_row(form.reformes) }}
+                </div>
+
+                {# Effectif initial du jour (nécessaire aux calculs) #}
+                <div class="col-md-6">
+                  {{ form_row(form.effectifInitial) }}
+                </div>
+
+                <div class="col-md-6">
+                  {{ form_row(form.bande) }}
+                </div>
+
+                {# Observations en pleine largeur #}
+                <div class="col-12">
+                  {{ form_row(form.observations) }}
+                </div>
+              </div>
+
+              {# Bouton de validation #}
+              <div class="text-center mt-4 pt-2">
+                <button class="btn btn-primary btn-lg px-5 gradient-custom-2 shadow-sm" type="submit">
+                  Enregistrer le suivi
+                </button>
+              </div>
+
+            {{ form_end(form) }}
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -4,37 +4,21 @@
 
 {% block body %}
 {% include "navbar.html.twig" %}
-<section class="vh-100" style="background-color: #9A616D;">
-  <div class="container py-5 h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col col-xl-10">
-        <div class="card" style="border-radius: 1rem;">
-          <div class="row g-0">
-            
-            <div class="col-md-6 col-lg-7 d-flex align-items-center">
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <a href="$">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                    ACHAT (MONTANT)</div>
-  
-                                            </div>
-                                        </a>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<div class="container py-4">
+    <h2 class="mb-4">Tableau de Bord - Courbe d'évolution</h2>
+
+    <div class="row">
+        <div class="col-12 col-lg-10 mx-auto">
+            <div class="card shadow rounded-3">
+                <div class="card-header bg-white font-weight-bold">
+                    Évolution de la mortalité et de la consommation
+                </div>
+                <div class="card-body">
+                    {# Affichage automatique de la courbe Chart.js #}
+                    {{ render_chart(chart) }}
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-</section>
+</div>
 {% endblock %}

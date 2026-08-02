@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BandesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -52,6 +54,17 @@ class Bandes
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $createtAt = null;
+
+    /**
+     * @var Collection<int, Suivi>
+     */
+    #[ORM\OneToMany(targetEntity: Suivi::class, mappedBy: 'bande')]
+    private Collection $suivis;
+
+    public function __construct()
+    {
+        $this->suivis = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -210,6 +223,36 @@ class Bandes
     public function setCreatetAt(\DateTime $createtAt): static
     {
         $this->createtAt = $createtAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Suivi>
+     */
+    public function getSuivis(): Collection
+    {
+        return $this->suivis;
+    }
+
+    public function addSuivi(Suivi $suivi): static
+    {
+        if (!$this->suivis->contains($suivi)) {
+            $this->suivis->add($suivi);
+            $suivi->setBande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSuivi(Suivi $suivi): static
+    {
+        if ($this->suivis->removeElement($suivi)) {
+            // set the owning side to null (unless already changed)
+            if ($suivi->getBande() === $this) {
+                $suivi->setBande(null);
+            }
+        }
 
         return $this;
     }
