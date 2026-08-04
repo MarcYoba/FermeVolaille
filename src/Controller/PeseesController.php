@@ -44,7 +44,7 @@ final class PeseesController extends AbstractController
         ]);
     }
 
-    #[Route('/getionnaire/pesees/{id}/edit', name: 'app_pesees_edit')]
+    #[Route('/admin/pesees/{id}/edit', name: 'app_pesees_edit')]
     public function edit(EntityManagerInterface $em, int $id, Request $request): Response
     {
         $pesees = $em->getRepository(Pesees::class)->find($id);
@@ -68,7 +68,7 @@ final class PeseesController extends AbstractController
         ]);
     }
 
-    #[Route('/getionnaire/pesees/{id}/delete', name: 'app_pesees_delete')]
+    #[Route('/admin/pesees/{id}/delete', name: 'app_pesees_delete')]
     public function delete(EntityManagerInterface $em, int $id): Response
     {
         $pesees = $em->getRepository(Pesees::class)->find($id);

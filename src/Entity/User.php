@@ -105,6 +105,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Pesees::class, mappedBy: 'user')]
     private Collection $pesees;
 
+    /**
+     * @var Collection<int, Aliment>
+     */
+    #[ORM\OneToMany(targetEntity: Aliment::class, mappedBy: 'user')]
+    private Collection $aliments;
+
+    /**
+     * @var Collection<int, MouvementStock>
+     */
+    #[ORM\OneToMany(targetEntity: MouvementStock::class, mappedBy: 'user')]
+    private Collection $mouvementStocks;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -117,6 +129,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->bandes = new ArrayCollection();
         $this->suivis = new ArrayCollection();
         $this->pesees = new ArrayCollection();
+        $this->aliments = new ArrayCollection();
+        $this->mouvementStocks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -530,6 +544,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($pesee->getUser() === $this) {
                 $pesee->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Aliment>
+     */
+    public function getAliments(): Collection
+    {
+        return $this->aliments;
+    }
+
+    public function addAliment(Aliment $aliment): static
+    {
+        if (!$this->aliments->contains($aliment)) {
+            $this->aliments->add($aliment);
+            $aliment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAliment(Aliment $aliment): static
+    {
+        if ($this->aliments->removeElement($aliment)) {
+            // set the owning side to null (unless already changed)
+            if ($aliment->getUser() === $this) {
+                $aliment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MouvementStock>
+     */
+    public function getMouvementStocks(): Collection
+    {
+        return $this->mouvementStocks;
+    }
+
+    public function addMouvementStock(MouvementStock $mouvementStock): static
+    {
+        if (!$this->mouvementStocks->contains($mouvementStock)) {
+            $this->mouvementStocks->add($mouvementStock);
+            $mouvementStock->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMouvementStock(MouvementStock $mouvementStock): static
+    {
+        if ($this->mouvementStocks->removeElement($mouvementStock)) {
+            // set the owning side to null (unless already changed)
+            if ($mouvementStock->getUser() === $this) {
+                $mouvementStock->setUser(null);
             }
         }
 
