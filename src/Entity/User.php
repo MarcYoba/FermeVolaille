@@ -99,6 +99,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Suivi::class, mappedBy: 'user')]
     private Collection $suivis;
 
+    /**
+     * @var Collection<int, Pesees>
+     */
+    #[ORM\OneToMany(targetEntity: Pesees::class, mappedBy: 'user')]
+    private Collection $pesees;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -110,6 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->magasinDediers = new ArrayCollection();
         $this->bandes = new ArrayCollection();
         $this->suivis = new ArrayCollection();
+        $this->pesees = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -493,6 +500,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($suivi->getUser() === $this) {
                 $suivi->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pesees>
+     */
+    public function getPesees(): Collection
+    {
+        return $this->pesees;
+    }
+
+    public function addPesee(Pesees $pesee): static
+    {
+        if (!$this->pesees->contains($pesee)) {
+            $this->pesees->add($pesee);
+            $pesee->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePesee(Pesees $pesee): static
+    {
+        if ($this->pesees->removeElement($pesee)) {
+            // set the owning side to null (unless already changed)
+            if ($pesee->getUser() === $this) {
+                $pesee->setUser(null);
             }
         }
 
