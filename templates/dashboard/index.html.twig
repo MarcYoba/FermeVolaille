@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Tableau de Bord - Pharmacie{% endblock %}
 
 {% block body %}
 {% include "navbar.html.twig" %}
-<div class="container py-4">
+<div class="container my-5">
     {# En-tête #}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -212,21 +212,6 @@
                     {% endfor %}
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-    
-    {# 4. GRAPHIQUE D'ÉVOLUTION DE LA MORTALITÉ ET DE LA CONSOMMATION #}
-    <div class="row">
-        <div class="col-12 col-lg-10 mx-auto">
-            <div class="card shadow rounded-3">
-                <div class="card-header bg-white font-weight-bold">
-                    Évolution de la mortalité et de la consommation
-                </div>
-                <div class="card-body">
-                    {# Affichage automatique de la courbe Chart.js #}
-                    {{ render_chart(chart) }}
-                </div>
             </div>
         </div>
     </div>

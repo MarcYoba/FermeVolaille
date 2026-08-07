@@ -2,65 +2,21 @@
 
 namespace App\Controller;
 
+use App\Entity\CoutSanitaire;
+use App\Entity\Lot;
+use App\Entity\Medicament;
 use App\Entity\Sortie;
-use App\Repository\SuiviRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
-use Symfony\UX\Chartjs\Model\Chart;
+use Symfony\Component\Routing\Annotation\Route;
 
-final class HomeController extends AbstractController
+class DashboardController extends AbstractController
 {
-    #[Route('/admin/home', name: 'app_home')]
-    public function index(SuiviRepository $suiviRepository, ChartBuilderInterface $chartBuilder, EntityManagerInterface $em): Response
+    #[Route('/dashboard', name: 'app_dashboard', methods: ['GET'])]
+    public function index(EntityManagerInterface $em): Response
     {
-        // 1. Récupérer les données de suivi ordonnées par date
-        $suivis = $suiviRepository->findBy([], ['createtAt' => 'ASC']);
-
-        // 2. Extraire les étiquettes (dates/âges) et les séries de données
-        $labels = [];
-        $dataMorts = [];
-        $dataConsommation = [];
-
-        foreach ($suivis as $suivi) {
-            $labels[] = 'Jour ' . $suivi->getAge() . ' (' . $suivi->getCreatetAt()->format('d/m') . ')';
-            $dataMorts[] = $suivi->getNombreMorts();
-            $dataConsommation[] = $suivi->getConsommationAliment();
-        }
-
-        // 3. Créer le graphique (Courbe / Line)
-        $chart = $chartBuilder->createChart(Chart::TYPE_LINE);
-
-        $chart->setData([
-            'labels' => $labels,
-            'datasets' => [
-                [
-                    'label' => 'Mortalité (nombre)',
-                    'backgroundColor' => 'rgba(220, 53, 69, 0.2)',
-                    'borderColor' => 'rgb(220, 53, 69)',
-                    'data' => $dataMorts,
-                    'tension' => 0.3, // Courbure de la ligne
-                ],
-                [
-                    'label' => 'Consommation Aliment (kg)',
-                    'backgroundColor' => 'rgba(40, 167, 69, 0.2)',
-                    'borderColor' => 'rgb(40, 167, 69)',
-                    'data' => $dataConsommation,
-                    'tension' => 0.3,
-                ],
-            ],
-        ]);
-
-        $chart->setOptions([
-            'responsive' => true,
-            'plugins' => [
-                'legend' => ['position' => 'top'],
-            ],
-        ]);
-
-                $today = new \DateTime();
+        $today = new \DateTime();
         $in30Days = (new \DateTime())->modify('+30 days');
 
         // 1. Chiffre d'affaires total
@@ -106,10 +62,7 @@ final class HomeController extends AbstractController
         // 6. 5 Dernières transactions (Délivrances)
         $dernieresSorties = $em->getRepository(Sortie::class)->findBy([], ['dateSortie' => 'DESC'], 5);
 
-
-        // 4. Passer la variable du graphique à la vue Twig
-        return $this->render('home/index.html.twig', [
-            'chart' => $chart,
+        return $this->render('dashboard/index.html.twig', [
             'chiffreAffaires' => $chiffreAffaires,
             'totalDelivrances' => $totalDelivrances,
             'lotsBientotPerimes' => $lotsBientotPerimes,

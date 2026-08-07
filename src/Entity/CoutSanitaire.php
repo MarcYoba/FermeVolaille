@@ -18,7 +18,7 @@ class CoutSanitaire
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'coutSanitaires')]
-    private ?sortie $sortie = null;
+    private ?Sortie $sortie = null;
 
     public function getId(): ?int
     {
