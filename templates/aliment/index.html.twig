@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Pesees{% endblock %}
+{% block title %}Hello AlimentController!{% endblock %}
 
 {% block body %}
 {% include "navbar.html.twig" %}
@@ -13,7 +13,7 @@
         <div class="card rounded-3 text-black shadow-lg">
           <div class="card-body p-4 p-md-5">
             
-            <h3 class="text-center mb-4 font-weight-bold">Pesees Quotidien de la Bande</h3>
+            <h3 class="text-center mb-4 font-weight-bold">Mouvement de stock Quotidien de la Bande</h3>
 
             {# Affichage des erreurs globales du formulaire #}
             {{ form_errors(form) }}
@@ -23,26 +23,26 @@
               <div class="row g-3">
                 {# Date et Âge #}
                 <div class="col-md-6">
-                  {{ form_row(form.createtAt) }}
+                  {{ form_row(form.nom) }}
                 </div>
                 <div class="col-md-6">
-                  {{ form_row(form.nombreSujetsPeses) }}
+                  {{ form_row(form.code) }}
                 </div>
 
                 {# Température et Humidité #}
                 <div class="col-md-6">
-                  {{ form_row(form.poidsTotalEchantillon) }}
+                  {{ form_row(form.uniteMesure) }}
                 </div>
                 <div class="col-md-6">
-                  {{ form_row(form.poidsMoyen) }}
+                  {{ form_row(form.quantiteStock) }}
                 </div>
 
                 {# Consommations #}
                 <div class="col-md-6">
-                  {{ form_row(form.gmq) }}
+                  {{ form_row(form.stockMinimum) }}
                 </div>
                 <div class="col-md-6">
-                  {{ form_row(form.bande) }}
+                  {{ form_row(form.prixUnitaire) }}
                 </div>
 
               </div>
@@ -50,7 +50,7 @@
               {# Bouton de validation #}
               <div class="text-center mt-4 pt-2">
                 <button class="btn btn-primary btn-lg px-5 gradient-custom-2 shadow-sm" type="submit">
-                  Enregistrer le poid
+                  Enregistrer Aliment
                 </button>
               </div>
 

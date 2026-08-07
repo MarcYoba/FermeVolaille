@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Délivrance{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+<div class="container my-5">
+    {# En-tête de la page #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 text-primary mb-1">
+                <i class="bi bi-prescription2 me-2"></i>Nouvelle Sortie
+            </h1>
+            <p class="text-muted mb-0">Enregistrement d'une sortie de stock et facturation du soin.</p>
+        </div>
+        <a href="{{ path('app_delivrance_nouvelle') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Réinitialiser
+        </a>
+        <a href="{{ path('app_delivrance_list') }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>List Sortie
+        </a>
+    </div>
+
+    {# Messages Flash (Erreurs de stock, Succès) #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label == 'danger' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+                <i class="bi {{ label == 'danger' ? 'bi-exclamation-octagon-fill' : 'bi-check-circle-fill' }} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {{ form_start(form) }}
+    <div class="row g-4">
+
+        {# 1. BLOC TRAITEMENT #}
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-journal-medical me-2"></i>1. Traitement / Prescription
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form_label(form.traitement, 'Sélectionner un traitement existant', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                        {{ form_widget(form.traitement, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.traitement) }}
+                    </div>
+
+                    <div class="position-relative my-3 text-center">
+                        <hr>
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small fw-bold">OU</span>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.nouveauTraitementNom, 'Créer un nouveau traitement', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                        {{ form_widget(form.nouveauTraitementNom, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Protocole Paludisme Aigu'}}) }}
+                        {{ form_errors(form.nouveauTraitementNom) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.descriptionTraitement, 'Posologie / Instructions', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.descriptionTraitement, {'attr': {'class': 'form-control', 'rows': '3', 'placeholder': 'Ex: 2 comprimés matin et soir pendant 5 jours'}}) }}
+                        {{ form_errors(form.descriptionTraitement) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# 2. BLOC SORTIE DE STOCK (LOT & QUANTITÉ) #}
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-box-arrow-up me-2"></i>2. Prélèvement du Stock
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form_label(form.lot, 'Sélectionner le lot en stock', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                        {{ form_widget(form.lot, {'attr': {'class': 'form-select'}}) }}
+                        <div class="form-text">Le stock disponible et la date d'expiration sont affichés pour chaque lot.</div>
+                        {{ form_errors(form.lot) }}
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            {{ form_label(form.quantiteSortie, 'Quantité délivrée', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.quantiteSortie, {'attr': {'class': 'form-control', 'min': '1'}}) }}
+                            {{ form_errors(form.quantiteSortie) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_label(form.motifSortie, 'Motif de la sortie', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.motifSortie, {'attr': {'class': 'form-select'}}) }}
+                            {{ form_errors(form.motifSortie) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# 3. BLOC COÛT SANITAIRE & RÈGLEMENT #}
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-cash-coin me-2"></i>3. Coût Sanitaire & Facturation
+                    </h5>
+                </div>
+                {# <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            {{ form_label(form.montantBrut, 'Montant Brut Total', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            <div class="input-group">
+                                {{ form_widget(form.montantBrut, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+                            </div>
+                            {{ form_errors(form.montantBrut) }}
+                        </div>
+
+                        <div class="col-md-3">
+                            {{ form_label(form.partAssurances, 'Prise en charge Mutuelle/Assurance', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.partAssurances, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+                            {{ form_errors(form.partAssurances) }}
+                        </div>
+
+                        <div class="col-md-3">
+                            {{ form_label(form.partPatient, 'Reste à charge Patient', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.partPatient, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+                            {{ form_errors(form.partPatient) }}
+                        </div>
+
+                        <div class="col-md-3">
+                            {{ form_label(form.statutPaiement, 'Statut du Règlement', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.statutPaiement, {'attr': {'class': 'form-select'}}) }}
+                            {{ form_errors(form.statutPaiement) }}
+                        </div>
+                    </div>
+                </div> #}
+
+                <div class="card-footer bg-light d-flex justify-content-end py-3">
+                    <button type="submit" class="btn btn-success px-4 btn-lg">
+                        <i class="bi bi-check-lg me-1"></i> Valider la Sortie
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

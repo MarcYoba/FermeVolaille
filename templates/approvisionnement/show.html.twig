@@ -1,0 +1,149 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail Approvisionnement #{{ entree.id }}{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+<div class="container my-5">
+    {# En-tête avec bouton retour et actions #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 text-primary mb-1">
+                <i class="bi bi-file-earmark-text me-2"></i>Fiche Approvisionnement #{{ entree.id }}
+            </h1>
+            <p class="text-muted mb-0">Enregistré le {{ entree.dateEntree ? entree.dateEntree|date('d/m/Y à H:i') : '-' }}</p>
+        </div>
+        <div>
+            <a href="{{ path('app_approvisionnement_list') }}" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+            </a>
+            <button onclick="window.print()" class="btn btn-outline-primary">
+                <i class="bi bi-printer me-1"></i>Imprimer
+            </button>
+        </div>
+    </div>
+
+    {% set lot = entree.lot %}
+    {% set medicament = lot ? lot.medicament : null %}
+    {% set fournisseur = entree.fournisseur %}
+
+    <div class="row g-4">
+        {# 1. Médicament & Traçabilité du Lot #}
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 mb-4">
+                {# <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="bi bi-capsule me-2"></i>Produit & Lot</h5>
+                    <span class="badge bg-light text-primary fs-6">
+                        Code-barres: {{ medicament and medicament.codeBarre ? medicament.codeBarre : 'N/C' }}
+                    </span>
+                </div> #}
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Nom du produit :</div>
+                        <div class="col-sm-8 fw-bold fs-5 text-dark">{{ medicament ? medicament.nomCommercial : 'Non spécifié' }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Forme galénique :</div>
+                        <div class="col-sm-8">{{ medicament and medicament.forme ? medicament.forme : 'Non précisée' }}</div>
+                    </div>
+                    <hr>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Numéro de lot :</div>
+                        <div class="col-sm-8">
+                            <code class="bg-light text-primary px-3 py-1 rounded fs-6 fw-bold">
+                                {{ lot ? lot.id : 'N/C' }}
+                            </code>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Date d'expiration :</div>
+                        <div class="col-sm-8">
+                            {% if lot and lot.dateExpiration %}
+                                {% set estPerime = lot.dateExpiration < date() %}
+                                <span class="badge {{ estPerime ? 'bg-danger' : 'bg-info text-dark' }} fs-6">
+                                    <i class="bi {{ estPerime ? 'bi-exclamation-triangle-fill' : 'bi-calendar-event' }} me-1"></i>
+                                    {{ lot.dateExpiration|date('d/m/Y') }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">N/C</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 text-muted">Stock restant dans ce lot :</div>
+                        <div class="col-sm-8 fw-bold text-success">
+                            {{ lot ? lot.quantiteEnStock : '0' }} unité(s)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Synthèse financière de la réception #}
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-cash-stack me-2"></i>Détails Quantités & Coûts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 border-end">
+                            <span class="text-muted d-block mb-1">Quantité reçue</span>
+                            <span class="fs-4 fw-bold text-success">+{{ entree.quantiteRecue }}</span>
+                        </div>
+                        <div class="col-md-4 border-end">
+                            <span class="text-muted d-block mb-1">Prix Achat Unitaire</span>
+                            <span class="fs-4 fw-bold text-dark">{{ lot ? lot.prixAchatUnitaire|number_format(2, ',', ' ') : '-' }} FCFA</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted d-block mb-1">Coût Total Réception</span>
+                            <span class="fs-4 fw-bold text-primary">
+                                {{ (lot and entree.quantiteRecue) ? (lot.prixAchatUnitaire * entree.quantiteRecue)|number_format(2, ',', ' ') : '-' }} FCFA
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# 2. Informations Fournisseur & Facture #}
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Fournisseur</h5>
+                </div>
+                <div class="card-body">
+                    <h5 class="fw-bold text-primary mb-3">{{ fournisseur ? fournisseur.nomSociete : 'Non renseigné' }}</h5>
+                    <p class="mb-2">
+                        <i class="bi bi-person me-2 text-muted"></i>
+                        {{ fournisseur and fournisseur.contactNom ? fournisseur.contactNom : 'Aucun contact' }}
+                    </p>
+                    <p class="mb-2">
+                        <i class="bi bi-telephone me-2 text-muted"></i>
+                        {{ fournisseur and fournisseur.telephone ? fournisseur.telephone : 'Non renseigné' }}
+                    </p>
+                    {# <p class="mb-0">
+                        <i class="bi bi-envelope me-2 text-muted"></i>
+                        {{ fournisseur and fournisseur.email ? fournisseur.email : 'Non renseigné' }}
+                    </p> #}
+                </div>
+            </div>
+
+            {# Informations de Facturation #}
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0 text-secondary"><i class="bi bi-receipt me-2"></i>Facturation</h5>
+                </div>
+                <div class="card-body">
+                    {# <div class="mb-2 text-muted">N° de Facture :</div>
+                    <div class="fw-bold fs-5 text-dark mb-3">
+                        {{ entree.numeroFacture ? entree.numeroFacture : 'Aucune facture liée' }}
+                    </div> #}
+                    <div class="mb-2 text-muted">Prix de vente public fixé :</div>
+                    <div class="fw-bold fs-6 text-success">
+                        {{ medicament ? medicament.prixUnitaire|number_format(2, ',', ' ') : '-' }} FCFA / unité
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

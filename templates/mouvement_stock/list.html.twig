@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suivi{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<section class="min-vh-100 py-5" style="background-color: #eee;">
+  <div class="container-fluid px-4">
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-12">
+        <div class="card text-black shadow-lg" style="border-radius: 15px;">
+          <div class="card-body p-4">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h3 class="fw-bold mb-0">Alimentation Quotidiens</h3>
+              <a href="{{ path('app_mouvement_stock') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Nouveau Alimentation
+              </a>
+            </div>
+
+            {# Conteneur responsive pour éviter que le tableau ne dépasse #}
+            <div class="table-responsive">
+              <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Aliment </th>
+                    <th scope="col">Type Mouvement</th>
+                    <th scope="col">Quantité</th>
+                    <th scope="col">Prix Unitaire Achat</th>
+                    <th scope="col">Bande </th>
+                    <th scope="col">Commentaire </th>
+                    <th scope="col" class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for mouvement in mouvements %}
+                    <tr>
+                      <th scope="row">{{ mouvement.id }}</th>
+                      {# Correction de la faute createtAt -> date #}
+                      <td>{{ mouvement.date ? mouvement.date|date('d/m/Y') : '' }}</td>
+                      <td>
+                        {% if mouvement.aliment is defined and mouvement.aliment %}
+                          <span class="badge bg-info text-dark">{{ mouvement.aliment.nom }}</span>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+                      <td>{{ mouvement.typeMouvement }} </td>
+                      <td>{{ mouvement.quantite }}</td>
+                      <td>{{ mouvement.prixUnitaireAchat }}</td>
+                      <td>
+                        {% if mouvement.bande is defined and mouvement.bande %}
+                          <span class="badge bg-info text-dark">{{ mouvement.bande.matricule }}</span>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+                      <td>{{ mouvement.commentaire }}</td>
+
+                      <td class="text-center">
+                        <div class="btn-group" role="group">
+                          {# Redirection corrigée vers la route suivi #}
+                          <a href="{{ path('app_mouvement_stock_edit', {'id': mouvement.id}) }}" class="btn btn-sm btn-outline-primary" title="Modifier">
+                            Modifier
+                          </a>
+                          
+                          {# Formulaire de suppression sécurisé CSRF #}
+                          <form method="post" action="{{ path('app_mouvement_stock_delete', {'id': mouvement.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce mouvement ?');" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ mouvement.id) }}">
+                            <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                              Supprimer
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="14" class="text-center py-4 text-muted">
+                        Aucun enregistrement de suivi trouvé.
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

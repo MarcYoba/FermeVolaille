@@ -1,0 +1,149 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Delivrances & Ventes{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+<div class="container my-5">
+
+    {# En-tête de la page #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 text-primary mb-1">
+                <i class="bi bi-journal-check me-2"></i>Historique des Sorties de Stock
+            </h1>
+            <p class="text-muted mb-0">Suivi des sorties de stock, des prescriptions et des règlements sanitaires.</p>
+        </div>
+        <a href="{{ path('app_delivrance_nouvelle') }}" class="btn btn-success">
+            <i class="bi bi-plus-circle me-1"></i> Nouvelle Sortie
+        </a>
+    </div>
+
+    {# Messages Flash #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label == 'danger' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {# Tableau récapitulatif #}
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date & Heure</th>
+                            <th>Produit délivré</th>
+                            <th>N° Lot</th>
+                            <th>Traitement / Motif</th>
+                            <th class="text-center">Quantité</th>
+                            <th class="text-end">Montant Brut</th>
+                            <th class="text-center">Statut Paiement</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for sortie in sorties %}
+                        {% set lot = sortie.lot %}
+                        {% set medicament = lot ? lot.medicament : null %}
+                        {% set traitement = sortie.traitement %}
+                        
+                        {# Dans la relation OneToOne, on récupère le coût lié si disponible #}
+                        {% set cout = sortie.coutSanitaire ?? null %}
+
+                        <tr>
+                            {# Date et heure de sortie #}
+                            <td class="fw-semibold text-secondary">
+                                {{ sortie.dateSortie ? sortie.dateSortie|date('d/m/Y H:i') : '-' }}
+                            </td>
+
+                            {# Produit et forme #}
+                            <td>
+                                <span class="fw-bold text-dark d-block">
+                                    {{ medicament ? medicament.nomCommercial : 'Produit inconnu' }}
+                                </span>
+                                {% if medicament and medicament.forme %}
+                                    <small class="text-muted">{{ medicament.forme }}</small>
+                                {% endif %}
+                            </td>
+
+                            {# N° de lot #}
+                            <td>
+                                <code class="bg-light text-primary px-2 py-1 rounded fs-6">
+                                    {{ lot ? lot.id : '-' }}
+                                </code>
+                            </td>
+
+                            {# Traitement ou motif de sortie #}
+                            <td>
+                                {% if traitement %}
+                                    <span class="badge bg-primary text-white">
+                                        <i class="bi bi-file-medical me-1"></i>{{ traitement.nomTraitement }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        {{ sortie.motifSortie }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            {# Quantité délivrée #}
+                            <td class="text-center">
+                                <span class="badge bg-warning text-dark fs-6 px-3">
+                                    -{{ sortie.quantiteSortie }}
+                                </span>
+                            </td>
+
+                            {# Montant financier #}
+                            <td class="text-end fw-bold">
+                                {% if cout %}
+                                    {{ cout.montantBrut|number_format(2, ',', ' ') }} €
+                                    {% if cout.partAssurances > 0 %}
+                                        <small class="d-block text-success fs-7">
+                                            (Mutuelle: {{ cout.partAssurances|number_format(2, ',', ' ') }} €)
+                                        </small>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+
+                            {# Statut du paiement #}
+                            <td class="text-center">
+                                {% if cout %}
+                                    {% set statut = cout.statutPaiement %}
+                                    {% set badgeClass = statut == 'Payé' ? 'bg-success' : (statut == 'Tiers Payant' ? 'bg-info text-dark' : 'bg-danger') %}
+                                    <span class="badge {{ badgeClass }}">
+                                        {{ statut }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark border">N/A</span>
+                                {% endif %}
+                            </td>
+
+                            {# Impression / Détails #}
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()" title="Imprimer reçu">
+                                    <i class="bi bi-printer"></i> Imprimer
+                                </button>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-receipt-cutoff fs-1 d-block mb-2 text-secondary"></i>
+                                Aucune délivrance ou vente enregistrée pour le moment.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

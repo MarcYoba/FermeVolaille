@@ -46,6 +46,7 @@ class Produit
     #[ORM\OneToMany(targetEntity: MagasinDedier::class, mappedBy: 'produit')]
     private Collection $magasinDediers;
 
+
     public function __construct()
     {
         $this->magasins = new ArrayCollection();
@@ -195,4 +196,10 @@ class Produit
 
         return $this;
     }
+
+    
+
+    
+
+    
 }

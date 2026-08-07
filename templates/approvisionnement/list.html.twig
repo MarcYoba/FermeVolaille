@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Approvisionnements{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+<div class="container my-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 text-primary mb-1">
+                <i class="bi bi-boxes me-2"></i>Historique des Approvisionnements
+            </h1>
+            <p class="text-muted mb-0">Suivi des réceptions de stock, des lots et des fournisseurs.</p>
+        </div>
+        <a href="{{ path('app_approvisionnement_nouveau') }}" class="btn btn-success">
+            <i class="bi bi-plus-circle me-1"></i> Nouvel Approvisionnement
+        </a>
+    </div>
+
+    {# Messages Flash #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date & Heure</th>
+                            <th>Fournisseur</th>
+                            <th>Médicament</th>
+                            <th>N° Lot</th>
+                            <th>Expiration</th>
+                            <th class="text-center">Quantité</th>
+                            <th class="text-end">Prix d'Achat Unitaire</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for entree in entrees %}
+                        {% set lot = entree.lot %}
+                        {% set medicament = lot ? lot.medicament : null %}
+                        <tr>
+                            {# Date d'entrée #}
+                            <td class="fw-semibold text-secondary">
+                                {{ entree.dateEntree ? entree.dateEntree|date('d/m/Y H:i') : '-' }}
+                            </td>
+
+                            {# Fournisseur #}
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    <i class="bi bi-building me-1"></i>{{ entree.fournisseur.nomSociete }}
+                                </span>
+                            </td>
+
+                            {# Médicament #}
+                            <td class="fw-bold text-dark">
+                                {{ medicament ? medicament.nomCommercial : 'Produit supprimé' }}
+                                {% if medicament and medicament.forme %}
+                                    <small class="text-muted d-block">({{ medicament.forme }})</small>
+                                {% endif %}
+                            </td>
+
+                            {# Numéro de lot #}
+                            <td>
+                                <code class="bg-light text-primary px-2 py-1 rounded fs-6">
+                                    {{ lot ? lot.id : '-' }}
+                                </code>
+                            </td>
+
+                            {# Date d'expiration avec indicateur visuel #}
+                            <td>
+                                {% if lot and lot.dateExpiration %}
+                                    {% set dateExp = lot.dateExpiration %}
+                                    {% set estPerime = dateExp < date() %}
+                                    
+                                    <span class="badge {{ estPerime ? 'bg-danger' : 'bg-info text-dark' }}">
+                                        <i class="bi {{ estPerime ? 'bi-exclamation-triangle-fill' : 'bi-calendar-event' }} me-1"></i>
+                                        {{ dateExp|date('d/m/Y') }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+
+                            {# Quantité reçue #}
+                            <td class="text-center">
+                                <span class="badge bg-success fs-6 px-3">
+                                    +{{ entree.quantiteRecue }}
+                                </span>
+                            </td>
+
+                            {# Prix d'achat #}
+                            <td class="text-end fw-semibold">
+                                {{ lot ? lot.prixAchatUnitaire|number_format(2, ',', ' ') : '-' }} FCFA
+                            </td>
+
+                            {# Actions #}
+                            <td class="text-center">
+                                <a href="{{ path('app_approvisionnement_show', {'id': entree.id}) }}" class="btn btn-sm btn-outline-secondary" title="Détails / Imprimer">
+                                    <i class="bi bi-eye"></i>Détails
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                                Aucun approvisionnement enregistré pour le moment.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

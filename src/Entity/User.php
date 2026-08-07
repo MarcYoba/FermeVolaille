@@ -105,6 +105,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Pesees::class, mappedBy: 'user')]
     private Collection $pesees;
 
+    /**
+     * @var Collection<int, Aliment>
+     */
+    #[ORM\OneToMany(targetEntity: Aliment::class, mappedBy: 'user')]
+    private Collection $aliments;
+
+    /**
+     * @var Collection<int, MouvementStock>
+     */
+    #[ORM\OneToMany(targetEntity: MouvementStock::class, mappedBy: 'user')]
+    private Collection $mouvementStocks;
+
+    /**
+     * @var Collection<int, Fournisseur>
+     */
+    #[ORM\OneToMany(targetEntity: Fournisseur::class, mappedBy: 'user')]
+    private Collection $fournisseurs;
+
+    /**
+     * @var Collection<int, Entree>
+     */
+    #[ORM\OneToMany(targetEntity: Entree::class, mappedBy: 'user')]
+    private Collection $entrees;
+
+    /**
+     * @var Collection<int, Lot>
+     */
+    #[ORM\OneToMany(targetEntity: Lot::class, mappedBy: 'user')]
+    private Collection $lots;
+
+    /**
+     * @var Collection<int, Medicament>
+     */
+    #[ORM\OneToMany(targetEntity: Medicament::class, mappedBy: 'user')]
+    private Collection $medicaments;
+
+    /**
+     * @var Collection<int, Sortie>
+     */
+    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'user')]
+    private Collection $sorties;
+
+    /**
+     * @var Collection<int, Traitement>
+     */
+    #[ORM\OneToMany(targetEntity: Traitement::class, mappedBy: 'user')]
+    private Collection $traitements;
+
+    /**
+     * @var Collection<int, CoutSanitaire>
+     */
+    #[ORM\OneToMany(targetEntity: CoutSanitaire::class, mappedBy: 'user')]
+    private Collection $coutSanitaires;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -117,6 +171,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->bandes = new ArrayCollection();
         $this->suivis = new ArrayCollection();
         $this->pesees = new ArrayCollection();
+        $this->aliments = new ArrayCollection();
+        $this->mouvementStocks = new ArrayCollection();
+        $this->fournisseurs = new ArrayCollection();
+        $this->entrees = new ArrayCollection();
+        $this->lots = new ArrayCollection();
+        $this->medicaments = new ArrayCollection();
+        $this->sorties = new ArrayCollection();
+        $this->traitements = new ArrayCollection();
+        $this->coutSanitaires = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -530,6 +593,276 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($pesee->getUser() === $this) {
                 $pesee->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Aliment>
+     */
+    public function getAliments(): Collection
+    {
+        return $this->aliments;
+    }
+
+    public function addAliment(Aliment $aliment): static
+    {
+        if (!$this->aliments->contains($aliment)) {
+            $this->aliments->add($aliment);
+            $aliment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAliment(Aliment $aliment): static
+    {
+        if ($this->aliments->removeElement($aliment)) {
+            // set the owning side to null (unless already changed)
+            if ($aliment->getUser() === $this) {
+                $aliment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MouvementStock>
+     */
+    public function getMouvementStocks(): Collection
+    {
+        return $this->mouvementStocks;
+    }
+
+    public function addMouvementStock(MouvementStock $mouvementStock): static
+    {
+        if (!$this->mouvementStocks->contains($mouvementStock)) {
+            $this->mouvementStocks->add($mouvementStock);
+            $mouvementStock->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMouvementStock(MouvementStock $mouvementStock): static
+    {
+        if ($this->mouvementStocks->removeElement($mouvementStock)) {
+            // set the owning side to null (unless already changed)
+            if ($mouvementStock->getUser() === $this) {
+                $mouvementStock->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Fournisseur>
+     */
+    public function getFournisseurs(): Collection
+    {
+        return $this->fournisseurs;
+    }
+
+    public function addFournisseur(Fournisseur $fournisseur): static
+    {
+        if (!$this->fournisseurs->contains($fournisseur)) {
+            $this->fournisseurs->add($fournisseur);
+            $fournisseur->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFournisseur(Fournisseur $fournisseur): static
+    {
+        if ($this->fournisseurs->removeElement($fournisseur)) {
+            // set the owning side to null (unless already changed)
+            if ($fournisseur->getUser() === $this) {
+                $fournisseur->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Entree>
+     */
+    public function getEntrees(): Collection
+    {
+        return $this->entrees;
+    }
+
+    public function addEntree(Entree $entree): static
+    {
+        if (!$this->entrees->contains($entree)) {
+            $this->entrees->add($entree);
+            $entree->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEntree(Entree $entree): static
+    {
+        if ($this->entrees->removeElement($entree)) {
+            // set the owning side to null (unless already changed)
+            if ($entree->getUser() === $this) {
+                $entree->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Lot>
+     */
+    public function getLots(): Collection
+    {
+        return $this->lots;
+    }
+
+    public function addLot(Lot $lot): static
+    {
+        if (!$this->lots->contains($lot)) {
+            $this->lots->add($lot);
+            $lot->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLot(Lot $lot): static
+    {
+        if ($this->lots->removeElement($lot)) {
+            // set the owning side to null (unless already changed)
+            if ($lot->getUser() === $this) {
+                $lot->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Medicament>
+     */
+    public function getMedicaments(): Collection
+    {
+        return $this->medicaments;
+    }
+
+    public function addMedicament(Medicament $medicament): static
+    {
+        if (!$this->medicaments->contains($medicament)) {
+            $this->medicaments->add($medicament);
+            $medicament->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedicament(Medicament $medicament): static
+    {
+        if ($this->medicaments->removeElement($medicament)) {
+            // set the owning side to null (unless already changed)
+            if ($medicament->getUser() === $this) {
+                $medicament->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getSorties(): Collection
+    {
+        return $this->sorties;
+    }
+
+    public function addSorty(Sortie $sorty): static
+    {
+        if (!$this->sorties->contains($sorty)) {
+            $this->sorties->add($sorty);
+            $sorty->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSorty(Sortie $sorty): static
+    {
+        if ($this->sorties->removeElement($sorty)) {
+            // set the owning side to null (unless already changed)
+            if ($sorty->getUser() === $this) {
+                $sorty->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Traitement>
+     */
+    public function getTraitements(): Collection
+    {
+        return $this->traitements;
+    }
+
+    public function addTraitement(Traitement $traitement): static
+    {
+        if (!$this->traitements->contains($traitement)) {
+            $this->traitements->add($traitement);
+            $traitement->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTraitement(Traitement $traitement): static
+    {
+        if ($this->traitements->removeElement($traitement)) {
+            // set the owning side to null (unless already changed)
+            if ($traitement->getUser() === $this) {
+                $traitement->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CoutSanitaire>
+     */
+    public function getCoutSanitaires(): Collection
+    {
+        return $this->coutSanitaires;
+    }
+
+    public function addCoutSanitaire(CoutSanitaire $coutSanitaire): static
+    {
+        if (!$this->coutSanitaires->contains($coutSanitaire)) {
+            $this->coutSanitaires->add($coutSanitaire);
+            $coutSanitaire->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoutSanitaire(CoutSanitaire $coutSanitaire): static
+    {
+        if ($this->coutSanitaires->removeElement($coutSanitaire)) {
+            // set the owning side to null (unless already changed)
+            if ($coutSanitaire->getUser() === $this) {
+                $coutSanitaire->setUser(null);
             }
         }
 
