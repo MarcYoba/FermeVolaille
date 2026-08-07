@@ -37,6 +37,9 @@ class Sortie
     #[ORM\OneToMany(targetEntity: CoutSanitaire::class, mappedBy: 'sortie')]
     private Collection $coutSanitaires;
 
+    #[ORM\Column(length: 255)]
+    private ?string $motifSortie = null;
+
     public function __construct()
     {
         $this->coutSanitaires = new ArrayCollection();
@@ -45,6 +48,30 @@ class Sortie
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getQuantiteSortie(): ?int
+    {
+        return $this->quantiteSortie;
+    }
+
+    public function setQuantiteSortie(int $quantiteSortie): static
+    {
+        $this->quantiteSortie = $quantiteSortie;
+
+        return $this;
+    }
+
+    public function getDateSortie(): ?\DateTimeInterface
+    {
+        return $this->dateSortie;
+    }
+
+    public function setDateSortie(\DateTimeInterface $dateSortie): static
+    {
+        $this->dateSortie = $dateSortie;
+
+        return $this;
     }
 
     public function getUser(): ?User
@@ -109,6 +136,18 @@ class Sortie
                 $coutSanitaire->setSortie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMotifSortie(): ?string
+    {
+        return $this->motifSortie;
+    }
+
+    public function setMotifSortie(string $motifSortie): static
+    {
+        $this->motifSortie = $motifSortie;
 
         return $this;
     }
