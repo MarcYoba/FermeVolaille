@@ -1,0 +1,148 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel Approvisionnement{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 text-primary">
+            <i class="bi bi-box-seam me-2"></i>Nouvel Approvisionnement
+        </h1>
+        <a href="{{ path('app_approvisionnement_list') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+        </a>
+    </div>
+
+    {# Affichage des messages flash (succès / erreurs) #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {{ form_start(form) }}
+    <div class="row g-4">
+        
+        {# 1. BLOC FOURNISSEUR #}
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-primary text-white font-weight-bold">
+                    <h5 class="card-title mb-0">1. Fournisseur</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form_label(form.fournisseur, 'Sélectionner un fournisseur', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                        {{ form_widget(form.fournisseur, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.fournisseur) }}
+                    </div>
+
+                    <div class="position-relative my-3 text-center">
+                        <hr>
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small fw-bold">OU</span>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.nouveauFournisseurNom, 'Créer un nouveau fournisseur', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                        {{ form_widget(form.nouveauFournisseurNom, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Laboratoire Sanofi'}}) }}
+                        {{ form_errors(form.nouveauFournisseurNom) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# 2. BLOC MÉDICAMENT #}
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-primary text-white font-weight-bold">
+                    <h5 class="card-title mb-0">2. Produit / Médicament</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form_label(form.medicament, 'Sélectionner un médicament', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                        {{ form_widget(form.medicament, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.medicament) }}
+                    </div>
+
+                    <div class="position-relative my-3 text-center">
+                        <hr>
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small fw-bold">OU</span>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.nouveauMedicamentNom, 'Nouveau médicament', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                        {{ form_widget(form.nouveauMedicamentNom, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Paracétamol 500mg'}}) }}
+                        {{ form_errors(form.nouveauMedicamentNom) }}
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.forme, 'Forme galénique', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.forme, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Comprimé, Sirop'}}) }}
+                            {{ form_errors(form.forme) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.prixUnitaire, 'Prix vente public', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.prixUnitaire, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+                            {{ form_errors(form.prixUnitaire) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# 3. BLOC LOT ET ENTRÉE EN STOCK #}
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white font-weight-bold">
+                    <h5 class="card-title mb-0">3. Traçabilité du Lot & Détails de Réception</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            {{ form_label(form.numeroLot, 'N° de Lot', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.numeroLot, {'attr': {'class': 'form-control', 'placeholder': 'Ex: LOT-2026-X9'}}) }}
+                            {{ form_errors(form.numeroLot) }}
+                        </div>
+
+                        <div class="col-md-3">
+                            {{ form_label(form.dateExpiration, 'Date d\'expiration', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.dateExpiration, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.dateExpiration) }}
+                        </div>
+
+                        <div class="col-md-2">
+                            {{ form_label(form.quantite, 'Quantité reçue', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.quantite, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
+                            {{ form_errors(form.quantite) }}
+                        </div>
+
+                        <div class="col-md-2">
+                            {{ form_label(form.prixAchatUnitaire, 'Prix d\'achat unitaire', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.prixAchatUnitaire, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+                            {{ form_errors(form.prixAchatUnitaire) }}
+                        </div>
+
+                        <div class="col-md-2">
+                            {{ form_label(form.numeroFacture, 'N° Facture', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.numeroFacture, {'attr': {'class': 'form-control', 'placeholder': 'Optionnel'}}) }}
+                            {{ form_errors(form.numeroFacture) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light d-flex justify-content-end py-3">
+                    <button type="reset" class="btn btn-outline-secondary me-2">Réinitialiser</button>
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-check-circle me-1"></i> Enregistrer l'approvisionnement
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
