@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vaccination{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 text-primary mb-1">
+                <i class="bi bi-shield-plus me-2"></i>Programmer une Vaccination
+            </h1>
+            <p class="text-muted mb-0">Enregistrement d'un acte sanitaire ou suivi du calendrier vaccinal.</p>
+        </div>
+    </div>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label == 'danger' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {{ form_start(form) }}
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white font-weight-bold">
+            <h5 class="card-title mb-0">Informations Sanitaires</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                
+                {# Bande et Vaccin #}
+                <div class="col-md-6">
+                    {{ form_label(form.bande, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.bande, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.bande) }}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form_label(form.vaccin, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.vaccin, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.vaccin) }}
+                </div>
+
+                {# Dates #}
+                <div class="col-md-6">
+                    {{ form_label(form.datePrevue, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.datePrevue, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.datePrevue) }}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form_label(form.dateRealisee, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.dateRealisee, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.dateRealisee) }}
+                </div>
+
+                {# Détails techniques #}
+                <div class="col-md-4">
+                    {{ form_label(form.dose, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.dose, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.dose) }}
+                </div>
+
+                <div class="col-md-4">
+                    {{ form_label(form.voieAdministration, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.voieAdministration, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.voieAdministration) }}
+                </div>
+
+                <div class="col-md-4">
+                    {{ form_label(form.responsable, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.responsable, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.responsable) }}
+                </div>
+
+                <div class="col-md-12">
+                    {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.statut) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-end py-3">
+            <button type="submit" class="btn btn-success px-4">
+                <i class="bi bi-check-circle me-1"></i> Enregistrer la vaccination
+            </button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
