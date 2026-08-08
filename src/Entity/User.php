@@ -159,6 +159,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: CoutSanitaire::class, mappedBy: 'user')]
     private Collection $coutSanitaires;
 
+    /**
+     * @var Collection<int, Vaccination>
+     */
+    #[ORM\OneToMany(targetEntity: Vaccination::class, mappedBy: 'user')]
+    private Collection $vaccinations;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -180,6 +186,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->sorties = new ArrayCollection();
         $this->traitements = new ArrayCollection();
         $this->coutSanitaires = new ArrayCollection();
+        $this->vaccinations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -863,6 +870,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($coutSanitaire->getUser() === $this) {
                 $coutSanitaire->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vaccination>
+     */
+    public function getVaccinations(): Collection
+    {
+        return $this->vaccinations;
+    }
+
+    public function addVaccination(Vaccination $vaccination): static
+    {
+        if (!$this->vaccinations->contains($vaccination)) {
+            $this->vaccinations->add($vaccination);
+            $vaccination->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVaccination(Vaccination $vaccination): static
+    {
+        if ($this->vaccinations->removeElement($vaccination)) {
+            // set the owning side to null (unless already changed)
+            if ($vaccination->getUser() === $this) {
+                $vaccination->setUser(null);
             }
         }
 

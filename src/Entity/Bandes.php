@@ -61,9 +61,16 @@ class Bandes
     #[ORM\OneToMany(targetEntity: Suivi::class, mappedBy: 'bande')]
     private Collection $suivis;
 
+    /**
+     * @var Collection<int, Vaccination>
+     */
+    #[ORM\OneToMany(targetEntity: Vaccination::class, mappedBy: 'bande')]
+    private Collection $vaccinations;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
+        $this->vaccinations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -251,6 +258,36 @@ class Bandes
             // set the owning side to null (unless already changed)
             if ($suivi->getBande() === $this) {
                 $suivi->setBande(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vaccination>
+     */
+    public function getVaccinations(): Collection
+    {
+        return $this->vaccinations;
+    }
+
+    public function addVaccination(Vaccination $vaccination): static
+    {
+        if (!$this->vaccinations->contains($vaccination)) {
+            $this->vaccinations->add($vaccination);
+            $vaccination->setBande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVaccination(Vaccination $vaccination): static
+    {
+        if ($this->vaccinations->removeElement($vaccination)) {
+            // set the owning side to null (unless already changed)
+            if ($vaccination->getBande() === $this) {
+                $vaccination->setBande(null);
             }
         }
 

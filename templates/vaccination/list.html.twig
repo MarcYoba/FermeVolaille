@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des Vaccinations{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+<div class="container my-5">
+    {# En-tête #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 text-primary mb-1">
+                <i class="bi bi-calendar-check me-2"></i>Suivi des Vaccinations
+            </h1>
+            <p class="text-muted mb-0">Gestion du calendrier sanitaire et des alertes de vaccination par bande.</p>
+        </div>
+        <a href="{{ path('app_vaccination') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Programmer une vaccination
+        </a>
+    </div>
+
+    {# Alerts Flash #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label == 'danger' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {# Cartes de résumés et alertes #}
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-danger text-white">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3 me-3">
+                        <i class="bi bi-exclamation-triangle fs-2"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle text-white-50 mb-1">Vaccinations en Retard</h6>
+                        <h3 class="card-title mb-0 fw-bold">{{ enRetardCount }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-warning text-dark">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle bg-dark bg-opacity-10 p-3 me-3">
+                        <i class="bi bi-clock-history fs-2"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle text-dark-50 mb-1">À réaliser aujourd'hui</h6>
+                        <h3 class="card-title mb-0 fw-bold">{{ aVenirAujourdhuiCount }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3 me-3">
+                        <i class="bi bi-journal-check fs-2"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle text-white-50 mb-1">Total Realisées</h6>
+                        <h3 class="card-title mb-0 fw-bold">{{ vaccinations|length }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Tableau principal #}
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white fw-bold border-0 pt-3">
+            <i class="bi bi-list-task me-2"></i>Programme de Vaccination
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Bande</th>
+                            <th>Vaccin</th>
+                            <th>Date Prévue</th>
+                            <th>Date Réalisée</th>
+                            <th>Dose / Voie</th>
+                            <th>Responsable</th>
+                            <th>Statut</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for v in vaccinations %}
+                        {% set isOverdue = v.statut != 'Effectué' and v.datePrevue < date('today') %}
+                        <tr class="{{ isOverdue ? 'table-danger' : '' }}">
+                            <td class="fw-bold text-primary">
+                                {{ v.bande ? v.bande.matricule : 'Bande non assignée' }}
+                            </td>
+                            <td class="fw-bold">{{ v.vaccin }}</td>
+                            <td>
+                                <i class="bi bi-calendar-event me-1 text-muted"></i>
+                                {{ v.datePrevue|date('d/m/Y') }}
+                            </td>
+                            <td>
+                                {% if v.dateRealisee %}
+                                    <span class="text-success fw-semibold">
+                                        <i class="bi bi-check2-circle me-1"></i>{{ v.dateRealisee|date('d/m/Y') }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted italic">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <small class="d-block fw-bold">{{ v.dose ?? 'N/A' }}</small>
+                                <small class="text-muted">{{ v.voieAdministration ?? '-' }}</small>
+                            </td>
+                            <td>{{ v.responsable ?? '-' }}</td>
+                            <td>
+                                {% if v.statut == 'Effectué' %}
+                                    <span class="badge bg-success"><i class="bi bi-check-lg me-1"></i>Effectué</span>
+                                {% elseif isOverdue %}
+                                    <span class="badge bg-danger"><i class="bi bi-exclamation-circle me-1"></i>En retard</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>Planifié</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                {% if v.statut != 'Effectué' %}
+                                    <form action="{{ path('app_vaccination_valider', {'id': v.id}) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-success me-1" title="Valider l'exécution">
+                                            <i class="bi bi-check-lg"></i> Valider
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                Aucune vaccination programmée pour le moment.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
