@@ -6,6 +6,7 @@ use App\Entity\Sortie;
 use App\Repository\SuiviRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
@@ -14,8 +15,12 @@ use Symfony\UX\Chartjs\Model\Chart;
 final class HomeController extends AbstractController
 {
     #[Route('/admin/home', name: 'app_home')]
-    public function index(SuiviRepository $suiviRepository, ChartBuilderInterface $chartBuilder, EntityManagerInterface $em): Response
+    public function index(SuiviRepository $suiviRepository, ChartBuilderInterface $chartBuilder, EntityManagerInterface $em, Request $request): Response
     {
+        // 1. Détection de la WebView Android
+        $isWebView = $request->headers->has('X-App-WebView') 
+            || $request->headers->get('X-Requested-With') === 'com.tonentreprise.tonapp';
+
         // 1. Récupérer les données de suivi ordonnées par date
         $suivis = $suiviRepository->findBy([], ['createtAt' => 'ASC']);
 
@@ -55,23 +60,22 @@ final class HomeController extends AbstractController
 
         $chart->setOptions([
             'responsive' => true,
+            'maintainAspectRatio' => false, // Rendu réactif optimisé pour les écrans mobiles
             'plugins' => [
                 'legend' => ['position' => 'top'],
             ],
         ]);
 
-                $today = new \DateTime();
+        $today = new \DateTime();
         $in30Days = (new \DateTime())->modify('+30 days');
 
-        // 1. Chiffre d'affaires total
+        // 5. Calcul des métriques KPI & Requêtes
         $chiffreAffaires = $em->createQuery(
             'SELECT SUM(c.montantBrut) FROM App\Entity\CoutSanitaire c'
         )->getSingleScalarResult() ?? '0.00';
 
-        // 2. Nombre total de délivrances / ventes
         $totalDelivrances = $em->getRepository(Sortie::class)->count([]);
 
-        // 3. Lots périmés dans les 30 prochains jours (stock > 0)
         $lotsBientotPerimes = $em->createQuery(
             'SELECT l FROM App\Entity\Lot l
              WHERE l.dateExpiration BETWEEN :today AND :in30Days
@@ -83,7 +87,6 @@ final class HomeController extends AbstractController
         ->setMaxResults(5)
         ->getResult();
 
-        // 4. Nombre de lots déjà périmés non encore jetés
         $countLotsPerimes = $em->createQuery(
             'SELECT COUNT(l.id) FROM App\Entity\Lot l
              WHERE l.dateExpiration < :today
@@ -92,7 +95,6 @@ final class HomeController extends AbstractController
         ->setParameter('today', $today)
         ->getSingleScalarResult();
 
-        // 5. Produits sous le seuil d'alerte de stock
         $medicamentsAlerteStock = $em->createQuery(
             'SELECT m, SUM(l.quantiteEnStock) as HIDDEN totalStock
              FROM App\Entity\Medicament m
@@ -103,19 +105,18 @@ final class HomeController extends AbstractController
         ->setMaxResults(5)
         ->getResult();
 
-        // 6. 5 Dernières transactions (Délivrances)
         $dernieresSorties = $em->getRepository(Sortie::class)->findBy([], ['dateSortie' => 'DESC'], 5);
 
-
-        // 4. Passer la variable du graphique à la vue Twig
+        // 6. Rendu du template Twig
         return $this->render('home/index.html.twig', [
-            'chart' => $chart,
-            'chiffreAffaires' => $chiffreAffaires,
-            'totalDelivrances' => $totalDelivrances,
-            'lotsBientotPerimes' => $lotsBientotPerimes,
-            'countLotsPerimes' => $countLotsPerimes,
+            'chart'                  => $chart,
+            'chiffreAffaires'        => $chiffreAffaires,
+            'totalDelivrances'       => $totalDelivrances,
+            'lotsBientotPerimes'     => $lotsBientotPerimes,
+            'countLotsPerimes'       => $countLotsPerimes,
             'medicamentsAlerteStock' => $medicamentsAlerteStock,
-            'dernieresSorties' => $dernieresSorties,
+            'dernieresSorties'       => $dernieresSorties,
+            'is_webview'             => $isWebView,
         ]);
     }
 }
