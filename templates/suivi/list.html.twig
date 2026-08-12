@@ -1,25 +1,94 @@
-{% extends 'base.html.twig' %}
+{% extends is_webview ? 'base_webview.html.twig' : 'base.html.twig' %}
 
 {% block title %}Suivi{% endblock %}
 
 {% block body %}
-{% include "navbar.html.twig" %}
+{# Navbar Web classique (masquée dans la WebView) #}
+{% if not is_webview %}
+    {% include "navbar.html.twig" %}
+{% endif %}
 
-<section class="min-vh-100 py-5" style="background-color: #eee;">
-  <div class="container-fluid px-4">
-    <div class="row d-flex justify-content-center align-items-center">
-      <div class="col-12">
-        <div class="card text-black shadow-lg" style="border-radius: 15px;">
-          <div class="card-body p-4">
-            
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h3 class="fw-bold mb-0">Historique des Suivis Quotidiens</h3>
-              <a href="{{ path('app_suivi') }}" class="btn btn-success">
-                <i class="fas fa-plus"></i> Nouveau Suivi
-              </a>
+<div class="container-fluid min-vh-100 {{ is_webview ? 'p-2 pb-5 mb-4' : 'py-4 bg-light' }}">
+  <div class="row justify-content-center align-items-center">
+    <div class="col-12">
+      
+      <div class="card {{ is_webview ? 'border-0 bg-transparent' : 'shadow-sm' }}">
+        <div class="card-body {{ is_webview ? 'p-1' : 'p-4' }}">
+          
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold mb-0 h4">Historique des Suivis</h3>
+            <a href="{{ path('app_suivi') }}" class="btn btn-success btn-sm fw-bold">
+              + Nouveau Suivi
+            </a>
+          </div>
+
+          {# --- MODE WEBVIEW : AFFICHAGE EN CARTES (MOBILE FRIENDLY) --- #}
+          {% if is_webview %}
+            <div class="d-flex flex-column gap-2">
+              {% for suivi in suivis %}
+                <div class="card border shadow-sm p-2 bg-white rounded">
+                  <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                    <div>
+                      <strong class="text-primary">#{{ suivi.id }}</strong> - 
+                      <span>{{ suivi.createtAt ? suivi.createtAt|date('d/m/Y') : '' }}</span>
+                    </div>
+                    {% if suivi.bande is defined and suivi.bande %}
+                      <span class="badge bg-info text-dark">{{ suivi.bande.matricule }}</span>
+                    {% endif %}
+                  </div>
+
+                  <div class="row g-2 text-center small mb-2">
+                    <div class="col-3 border-end">
+                      <div class="text-muted" style="font-size: 10px;">Âge</div>
+                      <div class="fw-bold">{{ suivi.age }} j</div>
+                    </div>
+                    <div class="col-3 border-end">
+                      <div class="text-muted" style="font-size: 10px;">Temp / Hum</div>
+                      <div>{{ suivi.temperature ? suivi.temperature ~ '°C' : '-' }} / {{ suivi.humidite ? suivi.humidite ~ '%' : '-' }}</div>
+                    </div>
+                    <div class="col-3 border-end">
+                      <div class="text-muted" style="font-size: 10px;">Alim / Eau</div>
+                      <div>{{ suivi.consommationAliment }}kg / {{ suivi.consommationEau }}L</div>
+                    </div>
+                    <div class="col-3">
+                      <div class="text-muted" style="font-size: 10px;">Morts / Réf.</div>
+                      <div>
+                        <span class="text-danger fw-bold">{{ suivi.nombreMorts }}</span> / 
+                        <span class="text-warning fw-bold">{{ suivi.reformes }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded small mb-2">
+                    <span>Eff. Init : <strong>{{ suivi.effectifInitial }}</strong></span>
+                    <span>Eff. Restant : <strong class="text-success">{{ suivi.effectifRestant }}</strong></span>
+                  </div>
+
+                  {% if suivi.observations %}
+                    <p class="small text-muted mb-2 fst-italic">« {{ suivi.observations|u.truncate(40, '...') }} »</p>
+                  {% endif %}
+
+                  <div class="d-flex justify-content-end gap-1 border-top pt-2">
+                    <a href="{{ path('app_suivi_edit', {'id': suivi.id}) }}" class="btn btn-sm btn-outline-primary py-1 px-2" style="font-size: 12px;">
+                      Modifier
+                    </a>
+                    <form method="post" action="{{ path('app_suivi_delete', {'id': suivi.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce suivi ?');" class="d-inline">
+                      <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ suivi.id) }}">
+                      <button class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 12px;">
+                        Supprimer
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              {% else %}
+                <div class="text-center py-4 text-muted bg-white rounded border">
+                  Aucun enregistrement de suivi trouvé.
+                </div>
+              {% endfor %}
             </div>
 
-            {# Conteneur responsive pour éviter que le tableau ne dépasse #}
+          {# --- MODE NAVIGATEUR WEB : TABLEAU CLASSIQUE --- #}
+          {% else %}
             <div class="table-responsive">
               <table class="table table-striped table-hover align-middle">
                 <thead class="table-dark">
@@ -44,7 +113,6 @@
                   {% for suivi in suivis %}
                     <tr>
                       <th scope="row">{{ suivi.id }}</th>
-                      {# Correction de la faute createtAt -> date #}
                       <td>{{ suivi.createtAt ? suivi.createtAt|date('d/m/Y') : '' }}</td>
                       <td>
                         {% if suivi.bande is defined and suivi.bande %}
@@ -61,25 +129,18 @@
                       <td><span class="badge bg-danger">{{ suivi.nombreMorts }}</span></td>
                       <td><span class="badge bg-warning text-dark">{{ suivi.reformes }}</span></td>
                       <td>{{ suivi.effectifInitial }}</td>
-                      
-                      {# Utilisation du getter calculé de l'entité #}
                       <td class="fw-bold text-success">{{ suivi.effectifRestant }}</td>
-                      
                       <td>
                         <small class="text-muted">{{ suivi.observations|default('Aucune')|u.truncate(20, '...') }}</small>
                       </td>
-                      
                       <td class="text-center">
                         <div class="btn-group" role="group">
-                          {# Redirection corrigée vers la route suivi #}
-                          <a href="{{ path('app_suivi_edit', {'id': suivi.id}) }}" class="btn btn-sm btn-outline-primary" title="Modifier">
+                          <a href="{{ path('app_suivi_edit', {'id': suivi.id}) }}" class="btn btn-sm btn-outline-primary">
                             Modifier
                           </a>
-                          
-                          {# Formulaire de suppression sécurisé CSRF #}
                           <form method="post" action="{{ path('app_suivi_delete', {'id': suivi.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce suivi ?');" class="d-inline">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ suivi.id) }}">
-                            <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                            <button class="btn btn-sm btn-outline-danger">
                               Supprimer
                             </button>
                           </form>
@@ -96,11 +157,52 @@
                 </tbody>
               </table>
             </div>
+          {% endif %}
 
-          </div>
         </div>
       </div>
+
     </div>
   </div>
-</section>
+</div>
+
+{# Navigation du bas : 100% Bootstrap 5 pur (WebView uniquement) #}
+{% if is_webview %}
+<nav class="navbar fixed-bottom navbar-light bg-white border-top p-0 shadow-sm">
+    <div class="container-fluid p-0">
+        <div class="row g-0 w-100 text-center">
+            
+            <div class="col-3">
+                <a href="{{ path('app_home') }}" class="nav-link text-secondary py-2">
+                    <div class="fs-5 lh-1">⌂</div>
+                    <small class="d-block" style="font-size: 10px;">Home</small>
+                </a>
+            </div>
+
+            <div class="col-3">
+                <a href="{{ path('app_bandes_liste') }}" class="nav-link text-secondary py-2">
+                    <div class="fs-5 lh-1">☰</div>
+                    <small class="d-block" style="font-size: 10px;">Bandes</small>
+                </a>
+            </div>
+
+            <div class="col-3">
+                <a href="{{ path('app_delivrance_list') }}" class="nav-link text-secondary py-2">
+                    <div class="fs-5 lh-1">💊</div>
+                    <small class="d-block" style="font-size: 10px;">Médicaments</small>
+                </a>
+            </div>
+
+            <div class="col-3">
+                <a href="{{ path('app_dashboard') }}" class="nav-link text-secondary py-2">
+                    <div class="fs-5 lh-1">📊</div>
+                    <small class="d-block" style="font-size: 10px;">Graphes</small>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</nav>
+{% endif %}
+
 {% endblock %}

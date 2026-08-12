@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    {# 1. Metatag Viewport optimisé mobile (empêche les zooms involontaires et le lag d'affichage) #}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <title>{% block title %}App Suivi{% endblock %}</title>
+
+    {# 2. Styles minimaux requis pour l'application mobile #}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app_webview') }}
+    {% endblock %}
+
+    {# CSS critique directement injecté pour éviter l'effet de flash d'écran blanc (FOUC) #}
+    <style>
+        /* Supprime le défilement élastique et les sélections indésirables */
+        body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 12px;
+        }
+
+        /* Autorise la sélection uniquement dans les champs de texte */
+        input, textarea, select {
+            -webkit-user-select: auto;
+            user-select: auto;
+            font-size: 16px !important; /* Empêche le zoom auto sur iOS/Android lors du focus */
+        }
+    </style>
+</head>
+<body>
+
+    {# 3. Pas de Navbar, pas de Sidebar, pas de Footer - On garde uniquement le contenu principal #}
+    <main class="webview-container">
+        {# Zone pour afficher les messages flash Symfony (succès, erreurs) #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'error' ? 'danger' : label }} mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% block body %}{% endblock %}
+    </main>
+
+    {# 4. Scripts JS légers uniquement #}
+    {% block javascripts %}
+        {# Charge un bundle Webpack/Vite spécifique et allégé (sans scripts lourds de back-office) #}
+        {{ encore_entry_script_tags('app_webview') }}
+    {% endblock %}
+
+</body>
+</html>
