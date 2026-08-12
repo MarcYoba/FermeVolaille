@@ -31,6 +31,9 @@
         "symfony/maker-bundle": "^1.67"
     },
     "config": {
+        "platform": {
+            "ext-redis": "6.1.0"
+        },
         "allow-plugins": {
             "php-http/discovery": true,
             "symfony/flex": true,
