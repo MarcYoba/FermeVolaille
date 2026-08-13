@@ -1,60 +1,71 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    {# 1. Metatag Viewport optimisé mobile (empêche les zooms involontaires et le lag d'affichage) #}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <title>{% block title %}App Suivi{% endblock %}</title>
+    <head>
+        <meta charset="UTF-8">
+        
+        {# 1. Meta Viewport mobile obligatoire pour un affichage parfait en WebView #}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+        
+        <title>{% block title %}App Suivi{% endblock %}</title>
 
-    {# 2. Styles minimaux requis pour l'application mobile #}
-    {% block stylesheets %}
-        {{ encore_entry_link_tags('app_webview') }}
-    {% endblock %}
+        <link rel="icon" href="{{ asset('img/logo.jpg') }}">
 
-    {# CSS critique directement injecté pour éviter l'effet de flash d'écran blanc (FOUC) #}
-    <style>
-        /* Supprime le défilement élastique et les sélections indésirables */
-        body {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 12px;
-        }
+        {# 2. CSS critique WebView (évite le flash blanc / FOUC et bloque les zooms/gestes parasites) #}
+        <style>
+            body {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+                -webkit-tap-highlight-color: transparent;
+                overscroll-behavior-y: none;
+                background-color: #f8f9fa;
+                margin: 0;
+                padding: 12px;
+            }
 
-        /* Autorise la sélection uniquement dans les champs de texte */
-        input, textarea, select {
-            -webkit-user-select: auto;
-            user-select: auto;
-            font-size: 16px !important; /* Empêche le zoom auto sur iOS/Android lors du focus */
-        }
-    </style>
-</head>
-<body>
+            /* Autorise la sélection de texte dans les formulaires et empêche le zoom iOS */
+            input, textarea, select {
+                -webkit-user-select: auto;
+                user-select: auto;
+                font-size: 16px !important;
+            }
 
-    {# 3. Pas de Navbar, pas de Sidebar, pas de Footer - On garde uniquement le contenu principal #}
-    <main class="webview-container">
-        {# Zone pour afficher les messages flash Symfony (succès, erreurs) #}
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label == 'error' ? 'danger' : label }} mb-3">
-                    {{ message }}
-                </div>
+            /* Assure que le conteneur des graphiques (canvas) prend bien toute la largeur */
+            .chart-container, canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+        </style>
+
+        {% block stylesheets %}
+        {% endblock %}
+
+        {# 3. Chargement correct des assets via AssetMapper (Importmap) #}
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+
+        {# 4. Gestion du Hot Reload FrankenPHP #}
+        {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
+        {% if frankenphp_hot_reload %}
+            <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
+            <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
+            <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+        {% endif %}
+    </head>
+    <body>
+        {# 5. Structure principale épurée (sans navbar/footer) #}
+        <main class="webview-container">
+            {# Messages Flash Symfony (Erreurs / Succès) #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} mb-3">
+                        {{ message }}
+                    </div>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
 
-        {% block body %}{% endblock %}
-    </main>
-
-    {# 4. Scripts JS légers uniquement #}
-    {% block javascripts %}
-        {# Charge un bundle Webpack/Vite spécifique et allégé (sans scripts lourds de back-office) #}
-        {{ encore_entry_script_tags('app_webview') }}
-    {% endblock %}
-
-</body>
+            {% block body %}{% endblock %}
+        </main>
+    </body>
 </html>
