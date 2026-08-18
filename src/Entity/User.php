@@ -165,6 +165,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Vaccination::class, mappedBy: 'user')]
     private Collection $vaccinations;
 
+    /**
+     * @var Collection<int, TransfertBatiment>
+     */
+    #[ORM\OneToMany(targetEntity: TransfertBatiment::class, mappedBy: 'user')]
+    private Collection $transfertBatiments;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -187,6 +193,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->traitements = new ArrayCollection();
         $this->coutSanitaires = new ArrayCollection();
         $this->vaccinations = new ArrayCollection();
+        $this->transfertBatiments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -900,6 +907,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($vaccination->getUser() === $this) {
                 $vaccination->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TransfertBatiment>
+     */
+    public function getTransfertBatiments(): Collection
+    {
+        return $this->transfertBatiments;
+    }
+
+    public function addTransfertBatiment(TransfertBatiment $transfertBatiment): static
+    {
+        if (!$this->transfertBatiments->contains($transfertBatiment)) {
+            $this->transfertBatiments->add($transfertBatiment);
+            $transfertBatiment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransfertBatiment(TransfertBatiment $transfertBatiment): static
+    {
+        if ($this->transfertBatiments->removeElement($transfertBatiment)) {
+            // set the owning side to null (unless already changed)
+            if ($transfertBatiment->getUser() === $this) {
+                $transfertBatiment->setUser(null);
             }
         }
 

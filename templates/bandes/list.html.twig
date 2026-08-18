@@ -57,6 +57,8 @@
                       <td>
                         {% if bande.batiments %}
                           <span class="badge bg-secondary">{{ bande.batiments.nom }}</span>
+                          <br>
+                          <a href="{{ path('app_transfert_batiment', {'id': bande.id}) }}" class="btn btn-sm btn-outline-info" title="Transferer">Transferet</a>
                         {% else %}
                           <span class="text-muted">-</span>
                         {% endif %}

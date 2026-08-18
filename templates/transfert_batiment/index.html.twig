@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Transfert de Bâtiment{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+{# Section d'arrière-plan #}
+<section class="min-vh-100 py-5" style="background-color: #9A616D;">
+  <div class="container h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-10">
+        <div class="card" style="border-radius: 1rem;">
+          
+          {# Section Formulaire #}
+          <div class="card-body p-md-5 mx-md-4 text-black">
+            <h3 class="text-center mb-4">Informations sur le Transfert</h3>
+            
+            {{ form_errors(form) }}
+
+            {{ form_start(form) }}
+              <div class="row g-3">
+                
+                {# Quantité #}
+                <div class="col-md-6">
+                  <div class="form-outline" data-mdb-input-init>
+                    {{ form_row(form.quantite, {'attr': {'class': 'form-control'}}) }}
+                  </div>
+                </div>
+
+                {# Statut #}
+                <div class="col-md-6">
+                  <div class="form-outline" data-mdb-input-init>
+                    {{ form_row(form.status, {'attr': {'class': 'form-select'}}) }}
+                  </div>
+                </div>
+
+                {# Bâtiment A (Départ) #}
+                <div class="col-md-6">
+                  <div class="form-outline" data-mdb-input-init>
+                    {{ form_row(form.batimenta, {'attr': {'class': 'form-select'}}) }}
+                  </div>
+                </div>
+
+                {# Bâtiment B (Destination) #}
+                <div class="col-md-6">
+                  <div class="form-outline" data-mdb-input-init>
+                    {{ form_row(form.batimentB, {'attr': {'class': 'form-select'}}) }}
+                  </div>
+                </div>
+
+                {# Bloc #}
+                <div class="col-md-6">
+                  <div class="form-outline" data-mdb-input-init>
+                    {{ form_row(form.bloc, {'attr': {'class': 'form-select'}}) }}
+                  </div>
+                </div>
+
+                {# Bandes #}
+                <div class="col-md-6">
+                  <div class="form-outline" data-mdb-input-init>
+                    {{ form_row(form.bandes, {'attr': {'class': 'form-select'}}) }}
+                  </div>
+                </div>
+
+                {# Date de création #}
+                <div class="col-md-6">
+                  <div class="form-outline" data-mdb-input-init>
+                    {{ form_row(form.createtAt, {'attr': {'class': 'form-control'}}) }}
+                  </div>
+                </div>
+
+              </div>
+
+              {# Bouton de validation #}
+              <div class="text-center pt-4 mt-3">
+                <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="submit">
+                  Enregistrer le transfert
+                </button>
+              </div>
+
+            {{ form_end(form) }}
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

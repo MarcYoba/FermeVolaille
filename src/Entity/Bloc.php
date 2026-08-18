@@ -34,9 +34,16 @@ class Bloc
     #[ORM\OneToMany(targetEntity: Batiments::class, mappedBy: 'bloc')]
     private Collection $batiments;
 
+    /**
+     * @var Collection<int, TransfertBatiment>
+     */
+    #[ORM\OneToMany(targetEntity: TransfertBatiment::class, mappedBy: 'bloc')]
+    private Collection $transfertBatiments;
+
     public function __construct()
     {
         $this->batiments = new ArrayCollection();
+        $this->transfertBatiments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,6 +123,36 @@ class Bloc
             // set the owning side to null (unless already changed)
             if ($batiment->getBloc() === $this) {
                 $batiment->setBloc(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TransfertBatiment>
+     */
+    public function getTransfertBatiments(): Collection
+    {
+        return $this->transfertBatiments;
+    }
+
+    public function addTransfertBatiment(TransfertBatiment $transfertBatiment): static
+    {
+        if (!$this->transfertBatiments->contains($transfertBatiment)) {
+            $this->transfertBatiments->add($transfertBatiment);
+            $transfertBatiment->setBloc($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransfertBatiment(TransfertBatiment $transfertBatiment): static
+    {
+        if ($this->transfertBatiments->removeElement($transfertBatiment)) {
+            // set the owning side to null (unless already changed)
+            if ($transfertBatiment->getBloc() === $this) {
+                $transfertBatiment->setBloc(null);
             }
         }
 

@@ -67,10 +67,17 @@ class Bandes
     #[ORM\OneToMany(targetEntity: Vaccination::class, mappedBy: 'bande')]
     private Collection $vaccinations;
 
+    /**
+     * @var Collection<int, TransfertBatiment>
+     */
+    #[ORM\OneToMany(targetEntity: TransfertBatiment::class, mappedBy: 'bandes')]
+    private Collection $transfertBatiments;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
         $this->vaccinations = new ArrayCollection();
+        $this->transfertBatiments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -288,6 +295,36 @@ class Bandes
             // set the owning side to null (unless already changed)
             if ($vaccination->getBande() === $this) {
                 $vaccination->setBande(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TransfertBatiment>
+     */
+    public function getTransfertBatiments(): Collection
+    {
+        return $this->transfertBatiments;
+    }
+
+    public function addTransfertBatiment(TransfertBatiment $transfertBatiment): static
+    {
+        if (!$this->transfertBatiments->contains($transfertBatiment)) {
+            $this->transfertBatiments->add($transfertBatiment);
+            $transfertBatiment->setBandes($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransfertBatiment(TransfertBatiment $transfertBatiment): static
+    {
+        if ($this->transfertBatiments->removeElement($transfertBatiment)) {
+            // set the owning side to null (unless already changed)
+            if ($transfertBatiment->getBandes() === $this) {
+                $transfertBatiment->setBandes(null);
             }
         }
 
