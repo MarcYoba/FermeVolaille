@@ -21,6 +21,7 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+/.env
 /.env.local
 /.env.local.php
 /.env.*.local
