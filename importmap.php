@@ -38,4 +38,11 @@ return [
     '@kurkle/color' => [
         'version' => '0.3.4',
     ],
+    '@fortawesome/fontawesome-free' => [
+        'version' => '7.3.1',
+    ],
+    '@fortawesome/fontawesome-free/css/fontawesome.min.css' => [
+        'version' => '7.3.1',
+        'type' => 'css',
+    ],
 ];
