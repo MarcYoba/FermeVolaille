@@ -55,10 +55,17 @@ class Batiments
     #[ORM\OneToMany(targetEntity: Bandes::class, mappedBy: 'batiments')]
     private Collection $bandes;
 
+    /**
+     * @var Collection<int, TransfertBatiment>
+     */
+    #[ORM\OneToMany(targetEntity: TransfertBatiment::class, mappedBy: 'batimenta')]
+    private Collection $transfertBatiments;
+
     public function __construct()
     {
         $this->magasinDediers = new ArrayCollection();
         $this->bandes = new ArrayCollection();
+        $this->transfertBatiments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,6 +235,36 @@ class Batiments
             // set the owning side to null (unless already changed)
             if ($bande->getBatiments() === $this) {
                 $bande->setBatiments(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TransfertBatiment>
+     */
+    public function getTransfertBatiments(): Collection
+    {
+        return $this->transfertBatiments;
+    }
+
+    public function addTransfertBatiment(TransfertBatiment $transfertBatiment): static
+    {
+        if (!$this->transfertBatiments->contains($transfertBatiment)) {
+            $this->transfertBatiments->add($transfertBatiment);
+            $transfertBatiment->setBatimenta($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransfertBatiment(TransfertBatiment $transfertBatiment): static
+    {
+        if ($this->transfertBatiments->removeElement($transfertBatiment)) {
+            // set the owning side to null (unless already changed)
+            if ($transfertBatiment->getBatimenta() === $this) {
+                $transfertBatiment->setBatimenta(null);
             }
         }
 

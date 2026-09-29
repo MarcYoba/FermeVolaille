@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Transferts de Bâtiment{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<section class="min-vh-100 py-5" style="background-color: #eee;">
+  <div class="container-fluid px-4">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-12">
+        <div class="card shadow-lg border-0" style="border-radius: 15px;">
+          <div class="card-body p-4 p-md-5">
+            
+            {# En-tête : Titre et bouton de création #}
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+              <h3 class="fw-bold mb-0 text-dark">Liste des Transferts de Bâtiment</h3>
+              {# <a href="{{ path('app_transfert_batiment_new')|default('#') }}" class="btn btn-success shadow-sm">
+                <i class="fas fa-plus"></i> Nouveau Transfert
+              </a> #}
+            </div>
+
+            {# Conteneur responsive pour le tableau #}
+            <div class="table-responsive">
+              <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Quantité</th>
+                    <th scope="col">Bâtiment Départ (A)</th>
+                    <th scope="col">Bâtiment Arrivée (B)</th>
+                    <th scope="col">Bloc</th>
+                    <th scope="col">Bande</th>
+                    <th scope="col">Utilisateur</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col" class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for transfert in transferts %}
+                    <tr>
+                      <th scope="row">{{ transfert.id }}</th>
+                      <td>{{ transfert.createtAt ? transfert.createtAt|date('d/m/Y') : '-' }}</td>
+                      <td class="fw-bold text-primary">{{ transfert.quantite }}</td>
+                      
+                      {# Bâtiment de départ (A) #}
+                      <td>
+                        {% if transfert.batimenta %}
+                          <span class="badge bg-secondary">{{ transfert.batimenta.nom }}</span>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+
+                      {# Bâtiment d'arrivée (B) #}
+                      <td>
+                        {% if transfert.batimentB %}
+                          <span class="badge bg-info text-dark">{{ transfert.batimentB.nom }}</span>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+
+                      {# Bloc #}
+                      <td>{{ transfert.bloc ? transfert.bloc.description : '-' }}</td>
+
+                      {# Bande #}
+                      <td>
+                        {% if transfert.bandes %}
+                          <span class="badge bg-dark">{{ transfert.bandes.matricule }}</span>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+
+                      {# Utilisateur #}
+                      <td>{{ transfert.user ? transfert.user.email : '-' }}</td>
+
+                      {# Statut avec badges colorés #}
+                      <td>
+                        {% if transfert.status == 'VALIDE' or transfert.status == 'Validé' %}
+                          <span class="badge bg-success">Validé</span>
+                        {% elseif transfert.status == 'EN_ATTENTE' or transfert.status == 'En attente' %}
+                          <span class="badge bg-warning text-dark">En attente</span>
+                        {% elseif transfert.status == 'ANNULE' or transfert.status == 'Annulé' %}
+                          <span class="badge bg-danger">Annulé</span>
+                        {% else %}
+                          <span class="badge bg-secondary">{{ transfert.status }}</span>
+                        {% endif %}
+                      </td>
+
+                      {# Actions #}
+                      <td class="text-center">
+                        <div class="btn-group" role="group">
+                          {# <a href="{{ path('app_transfert_batiment_show', {'id': transfert.id})|default('#') }}" class="btn btn-sm btn-outline-info" title="Détails">
+                            Voir
+                          </a> #}
+                          {# <a href="{{ path('app_transfert_batiment_edit', {'id': transfert.id})|default('#') }}" class="btn btn-sm btn-outline-primary" title="Modifier">
+                            Modifier
+                          </a> #}
+                          {# <a href="{{ path('app_transfert_batiment_delete', {'id': transfert.id})|default('#') }}" class="btn btn-sm btn-outline-danger" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer ce transfert ?');">
+                            Supprimer
+                          </a> #}
+                        </div>
+                      </td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="10" class="text-center py-4 text-muted">
+                        Aucun transfert enregistré pour le moment.
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

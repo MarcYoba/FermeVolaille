@@ -20,7 +20,7 @@ class BandesType extends AbstractType
     {
         $builder
             ->add('matricule', TextType::class,[
-                'label' => 'Matriccule de la bande',
+                'label' => 'Matricule de la bande',
                 'attr' => [
                     'placeholder' => 'Entrez le Matricule de la bande',
                     'class' => 'form-control',
