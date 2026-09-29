@@ -1,0 +1,291 @@
+{% extends (is_webview is defined and is_webview) ? 'base_webview.html.twig' : 'base.html.twig' %}
+
+{% block title %}Tableau de Bord{% endblock %}
+
+{% block body %}
+{# Inclus la Navbar uniquement sur le Web classique #}
+{% if is_webview is not defined or not is_webview %}
+    {% include "navbar.html.twig" %}
+{% endif %}
+
+<div class="{{ (is_webview is defined and is_webview) ? 'container-fluid p-2' : 'container py-4' }}">
+    {# Conteneur Principal #}
+    <div class="{{ (is_webview is defined and is_webview) ? 'bg-transparent border-0' : 'card border border-2 border-secondary-subtle rounded-4 shadow-sm bg-white p-4 p-md-5' }}">
+        
+        {# En-tête du Tableau de Bord #}
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 pb-3 mb-3 border-bottom border-secondary-subtle">
+            <div>
+                <h1 class="{{ (is_webview is defined and is_webview) ? 'h4' : 'h2' }} text-primary fw-bold mb-1">
+                    <i class="bi bi-speedometer2 me-2"></i>Tableau de Bord
+                </h1>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-info-circle me-1"></i>Vue synthétique de l'activité, des stocks et des alertes sanitaires.
+                </p>
+            </div>
+            
+            {# Boutons d'action #}
+            <div class="d-grid d-md-flex gap-2">
+                <a href="{{ path('app_bandes_liste') }}" class="btn btn-primary shadow-sm">
+                    <i class="bi bi-grid-3x3-gap-fill me-1"></i> Bandes
+                </a>
+                <a href="{{ path('app_delivrance_list') }}" class="btn btn-success shadow-sm">
+                    <i class="bi bi-capsule-pills me-1"></i> Médicaments
+                </a>
+            </div>
+        </div>
+
+        {# 1. INDICATEURS CLÉS #}
+        <div class="row g-2 g-md-3 mb-4">
+            {# Chiffre d'affaires #}
+            <div class="col-6 col-xl-3">
+                <div class="card border border-secondary-subtle shadow-sm bg-primary text-white h-100 rounded-3">
+                    <div class="card-body p-2 p-md-3 d-flex align-items-center">
+                        <div class="rounded-circle bg-white bg-opacity-25 p-2 p-md-3 me-2 me-md-3 d-none d-sm-flex align-items-center justify-content-center">
+                            <i class="bi bi-cash-coin fs-3 fs-md-2"></i>
+                        </div>
+                        <div>
+                            <h6 class="card-subtitle text-white-50 mb-1 small">
+                                <i class="bi bi-graph-up me-1 d-sm-none"></i>Chiffre d'Affaires
+                            </h6>
+                            <h4 class="card-title mb-0 fw-bold fs-6 fs-md-4">{{ chiffreAffaires|number_format(2, ',', ' ') }} FCFA</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Total Délivrances #}
+            <div class="col-6 col-xl-3">
+                <div class="card border border-secondary-subtle shadow-sm bg-success text-white h-100 rounded-3">
+                    <div class="card-body p-2 p-md-3 d-flex align-items-center">
+                        <div class="rounded-circle bg-white bg-opacity-25 p-2 p-md-3 me-2 me-md-3 d-none d-sm-flex align-items-center justify-content-center">
+                            <i class="bi bi-box-arrow-up-right fs-3 fs-md-2"></i>
+                        </div>
+                        <div>
+                            <h6 class="card-subtitle text-white-50 mb-1 small">
+                                <i class="bi bi-cart-check me-1 d-sm-none"></i>Sorties Produit
+                            </h6>
+                            <h4 class="card-title mb-0 fw-bold fs-6 fs-md-4">{{ totalDelivrances }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Stock en Alerte #}
+            <div class="col-6 col-xl-3">
+                <div class="card border border-secondary-subtle shadow-sm bg-warning text-dark h-100 rounded-3">
+                    <div class="card-body p-2 p-md-3 d-flex align-items-center">
+                        <div class="rounded-circle bg-dark bg-opacity-10 p-2 p-md-3 me-2 me-md-3 d-none d-sm-flex align-items-center justify-content-center">
+                            <i class="bi bi-exclamation-triangle-fill fs-3 fs-md-2"></i>
+                        </div>
+                        <div>
+                            <h6 class="card-subtitle text-dark-50 mb-1 small">
+                                <i class="bi bi-box-seam me-1 d-sm-none"></i>Alertes Stock
+                            </h6>
+                            <h4 class="card-title mb-0 fw-bold fs-6 fs-md-4">
+                                {{ medicamentsAlerteStock|length }} <span class="d-none d-sm-inline">produit(s)</span>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Péremptions Proches #}
+            <div class="col-6 col-xl-3">
+                <div class="card border border-secondary-subtle shadow-sm bg-danger text-white h-100 rounded-3">
+                    <div class="card-body p-2 p-md-3 d-flex align-items-center">
+                        <div class="rounded-circle bg-white bg-opacity-25 p-2 p-md-3 me-2 me-md-3 d-none d-sm-flex align-items-center justify-content-center">
+                            <i class="bi bi-calendar2-x-fill fs-3 fs-md-2"></i>
+                        </div>
+                        <div>
+                            <h6 class="card-subtitle text-white-50 mb-1 small">
+                                <i class="bi bi-hourglass-split me-1 d-sm-none"></i>Péremptions &lt; 30j
+                            </h6>
+                            <h4 class="card-title mb-0 fw-bold fs-6 fs-md-4">
+                                {{ lotsBientotPerimes|length }} <span class="d-none d-sm-inline">lot(s)</span>
+                            </h4>
+                            {% if countLotsPerimes > 0 %}
+                                <small class="badge bg-white text-danger mt-1 p-1 small">
+                                    <i class="bi bi-x-circle-fill me-1"></i>{{ countLotsPerimes }} périmé(s)
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# 2. SECTION DÉTAILLÉE DES ALERTES #}
+        <div class="row g-3 mb-4">
+            {# Alertes Stock Faible #}
+            <div class="col-12 col-lg-6">
+                <div class="card border border-secondary-subtle shadow-sm h-100 rounded-3 overflow-hidden">
+                    <div class="card-header bg-light fw-bold text-warning border-bottom border-secondary-subtle py-2 py-md-3 small d-flex align-items-center">
+                        <i class="bi bi-shield-exclamation fs-5 me-2"></i>Produits sous le Seuil Minimal
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 {{ (is_webview is defined and is_webview) ? 'table-sm small' : '' }}">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th><i class="bi bi-prescription2 me-1"></i>Produit</th>
+                                        <th><i class="bi bi-sliders me-1"></i>Seuil</th>
+                                        <th><i class="bi bi-layers-half me-1"></i>Stock</th>
+                                        <th class="text-end"><i class="bi bi-gear me-1"></i>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for med in medicamentsAlerteStock %}
+                                    {% set totalStock = 0 %}
+                                    {% for lot in med.lots %}
+                                        {% set totalStock = totalStock + lot.quantiteEnStock %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="fw-bold text-dark">
+                                            <i class="bi bi-capsule text-secondary me-1"></i>{{ med.nomCommercial }}
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">{{ med.seuilAlerte |default(0) }}</span></td>
+                                        <td>
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-arrow-down-short me-1"></i>{{ totalStock }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="{{ path('app_approvisionnement_nouveau') }}" class="btn btn-xs btn-sm btn-outline-primary">
+                                                <i class="bi bi-plus-circle me-1"></i>Commander
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3">
+                                            <i class="bi bi-check-circle text-success me-1"></i>Aucune alerte de stock.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Alertes Péremptions Imminentes #}
+            <div class="col-12 col-lg-6">
+                <div class="card border border-secondary-subtle shadow-sm h-100 rounded-3 overflow-hidden">
+                    <div class="card-header bg-light fw-bold text-danger border-bottom border-secondary-subtle py-2 py-md-3 small d-flex align-items-center">
+                        <i class="bi bi-alarm fs-5 me-2"></i>Lots Proches de la Péremption
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 {{ (is_webview is defined and is_webview) ? 'table-sm small' : '' }}">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th><i class="bi bi-box me-1"></i>Produit / Lot</th>
+                                        <th><i class="bi bi-calendar-event me-1"></i>Expiration</th>
+                                        <th class="text-end"><i class="bi bi-archive me-1"></i>Reste</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for lot in lotsBientotPerimes %}
+                                    <tr>
+                                        <td>
+                                            <span class="fw-bold d-block text-dark">
+                                                <i class="bi bi-capsule me-1 text-primary"></i>{{ lot.medicament ? lot.medicament.nomCommercial : 'Inconnu' }}
+                                            </span>
+                                            <small class="text-muted">
+                                                <i class="bi bi-barcode me-1"></i>Lot: {{ lot.numeroLot | default('N/A') }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-calendar-x me-1"></i>{{ lot.dateExpiration|date('d/m/Y') }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end fw-bold text-dark">{{ lot.quantiteEnStock }} pce(s)</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-3">
+                                            <i class="bi bi-check-circle text-success me-1"></i>Aucun lot en péremption imminente.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# 3. HISTORIQUE DES DERNIÈRES DÉLIVRANCES #}
+        <div class="card border border-secondary-subtle shadow-sm mb-4 rounded-3 overflow-hidden">
+            <div class="card-header bg-light fw-bold text-primary border-bottom border-secondary-subtle py-2 py-md-3 d-flex justify-content-between align-items-center small">
+                <span><i class="bi bi-receipt-cutoff me-2"></i>Dernières Délivrances de Médicaments</span>
+                <a href="{{ path('app_delivrance_list') }}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-clock-history me-1"></i>Historique
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 {{ (is_webview is defined and is_webview) ? 'table-sm small' : '' }}">
+                        <thead class="table-light">
+                            <tr>
+                                <th><i class="bi bi-clock me-1"></i>Date</th>
+                                <th><i class="bi bi-prescription me-1"></i>Produit</th>
+                                <th><i class="bi bi-hash me-1"></i>Qté</th>
+                                <th class="d-none d-sm-table-cell"><i class="bi bi-journal-medical me-1"></i>Motif</th>
+                                <th class="text-end"><i class="bi bi-currency-exchange me-1"></i>Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for sortie in dernieresSorties %}
+                            {% set lot = sortie.lot %}
+                            {% set med = lot ? lot.medicament : null %}
+                            {% set cout = sortie.coutSanitaire ?? null %}
+                            <tr>
+                                <td>
+                                    <span class="text-nowrap">
+                                        <i class="bi bi-calendar3 me-1 text-muted"></i>{{ sortie.dateSortie|date('d/m H:i') }}
+                                    </span>
+                                </td>
+                                <td class="fw-bold text-dark">{{ med ? med.nomCommercial : '-' }}</td>
+                                <td>
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-dash-circle me-1"></i>{{ sortie.quantiteSortie }}
+                                    </span>
+                                </td>
+                                <td class="d-none d-sm-table-cell">
+                                    <i class="bi bi-tag me-1 text-muted"></i>
+                                    {{ sortie.traitement ? sortie.traitement.nomTraitement : sortie.motifSortie }}
+                                </td>
+                                <td class="text-end fw-bold">
+                                    {{ cout ? cout.montantBrut|number_format(2, ',', ' ') ~ ' FCFA' : '-' }}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-3">
+                                    <i class="bi bi-inbox me-1"></i>Aucune transaction récente.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {# 4. GRAPHIQUE D'ÉVOLUTION #}
+        <div class="card border border-secondary-subtle shadow-sm rounded-3 overflow-hidden">
+            <div class="card-header bg-light fw-bold text-dark border-bottom border-secondary-subtle py-2 py-md-3 small d-flex align-items-center">
+                <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Évolution mortalité &amp; consommation
+            </div>
+            <div class="card-body p-2 p-md-4">
+                {{ render_chart(chart) }}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

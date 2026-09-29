@@ -1,46 +1,150 @@
-{% extends 'base.html.twig' %}
+{% extends (is_webview is defined and is_webview) ? 'base_webview.html.twig' : 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Création de compte{% endblock %}
 
 {% block body %}
-<section class="vh-100" style="background-color: #eee;">
-  <div class="container h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-lg-12 col-xl-11">
-        <div class="card text-black" style="border-radius: 25px;">
-          <div class="card-body p-md-5">
-            <div class="row justify-content-center">
-              <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+{# CSS Personnalisé : Arrière-plan forêt + Ajustements UI #}
+<style>
+    .bg-forest-gradient {
+        background: linear-gradient(135deg, #0d3b2e 0%, #114b5f 50%, #1a5e63 100%);
+    }
+    .toggle-password-btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        z-index: 5;
+    }
+</style>
 
-                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Creation du compte</p>
-    
-
-                {{ form_errors(registrationForm) }}
-
-                {{ form_start(registrationForm) }}
-                    {{ form_row(registrationForm.email) }}
-                    {{ form_row(registrationForm.plainPassword, {
-                        label: 'Password'
-                    }) }}
-                    {{ form_row(registrationForm.nom) }}
-                    {{ form_row(registrationForm.telephone) }}
-                    {{ form_row(registrationForm.agreeTerms) }}
+<div class="container-fluid min-vh-100 d-flex flex-column justify-content-center {{ (is_webview is defined and is_webview) ? 'p-2' : 'py-4 bg-forest-gradient' }}">
+    <div class="row justify-content-center align-items-center w-100 m-0">
+        
+        <div class="col-12 col-xl-10">
+            <div class="card {{ (is_webview is defined and is_webview) ? 'border-0 bg-transparent' : 'shadow-lg border-0 rounded-4' }}">
+                <div class="card-body {{ (is_webview is defined and is_webview) ? 'p-1' : 'p-4 p-md-5 bg-white rounded-4' }}">
                     
+                    <div class="row justify-content-center align-items-center">
+                        
+                        {# Formulaire de création de compte #}
+                        <div class="col-md-10 col-lg-6 order-2 order-lg-1">
 
-                    <button type="submit" class="btn btn-lg btn-primary">Enregistrer</button>
-                {{ form_end(registrationForm) }}
+                            <h2 class="text-center fw-bold mb-4 h3 text-dark">
+                                <i class="fas fa-user-plus me-2 text-success"></i>Création de compte
+                            </h2>
+
+                            {# Erreurs globales du formulaire #}
+                            {% if form_errors(registrationForm) %}
+                                <div class="alert alert-danger mb-3 p-2 small shadow-sm">
+                                    {{ form_errors(registrationForm) }}
+                                </div>
+                            {% endif %}
+
+                            {{ form_start(registrationForm) }}
+
+                                {# Nom complet #}
+                                <div class="mb-3">
+                                    {{ form_label(registrationForm.nom, 'Nom complet', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-user text-muted"></i></span>
+                                        {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom complet'}}) }}
+                                    </div>
+                                    <div class="text-danger small mt-1">{{ form_errors(registrationForm.nom) }}</div>
+                                </div>
+
+                                {# Téléphone #}
+                                <div class="mb-3">
+                                    {{ form_label(registrationForm.telephone, 'Numéro de téléphone', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-phone text-muted"></i></span>
+                                        {{ form_widget(registrationForm.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Votre numéro'}}) }}
+                                    </div>
+                                    <div class="text-danger small mt-1">{{ form_errors(registrationForm.telephone) }}</div>
+                                </div>
+
+                                {# Adresse Email #}
+                                <div class="mb-3">
+                                    {{ form_label(registrationForm.email, 'Adresse email', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-envelope text-muted"></i></span>
+                                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'nom@exemple.com'}}) }}
+                                    </div>
+                                    <div class="text-danger small mt-1">{{ form_errors(registrationForm.email) }}</div>
+                                </div>
+
+                                {# Mot de passe + Bouton Voir/Masquer #}
+                                <div class="mb-3">
+                                    {{ form_label(registrationForm.plainPassword, 'Mot de passe', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-lock text-muted"></i></span>
+                                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control border-end-0', 'placeholder': '••••••••', 'id': 'register_password'}}) }}
+                                        <button class="btn btn-outline-secondary toggle-password-btn px-3" type="button" id="toggleRegisterPasswordBtn">
+                                            <i class="fas fa-eye" id="toggleRegisterPasswordIcon"></i>
+                                        </button>
+                                    </div>
+                                    <div class="text-danger small mt-1">{{ form_errors(registrationForm.plainPassword) }}</div>
+                                </div>
+
+                                {# Conditions d'utilisation #}
+                                <div class="mb-3 form-check">
+                                    {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+                                    {{ form_label(registrationForm.agreeTerms, "J'accepte les conditions d'utilisation", {'label_attr': {'class': 'form-check-label small'}}) }}
+                                    <div class="text-danger small">{{ form_errors(registrationForm.agreeTerms) }}</div>
+                                </div>
+
+                                {# Bouton de validation #}
+                                <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm mt-2">
+                                    <i class="fas fa-check-circle me-1"></i> S'inscrire
+                                </button>
+
+                                {# Lien vers la page de connexion #}
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">Vous avez déjà un compte ? 
+                                        <a href="{{ path('app_login') }}" class="text-decoration-none fw-bold text-success">Se connecter</a>
+                                    </small>
+                                </div>
+
+                            {{ form_end(registrationForm) }}
+
+                        </div>
+
+                        {# Image illustrative : Masquée dans la WebView #}
+                        {% if is_webview is not defined or not is_webview %}
+                            <div class="col-md-10 col-lg-6 order-1 order-lg-2 text-center mb-4 mb-lg-0 d-none d-lg-block">
+                                <img src="{{ asset('img/logo.jpg') }}" class="img-fluid rounded-3 shadow-sm" alt="Illustration" style="max-height: 350px;">
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
             </div>
-              <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
-                  class="img-fluid" alt="Sample image">
-
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
+
     </div>
-  </div>
-</section>
+</div>
+
+{# Footer classique #}
+{% if is_webview is not defined or not is_webview %}
+    <footer class="bg-white border-top text-center py-3 mt-auto">
+        <small class="text-muted">Copyright © {{ "now"|date("Y") }} - Tous droits réservés.</small>
+    </footer>
+{% endif %}
+
+{# Script pour le bouton d'affichage du mot de passe #}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('toggleRegisterPasswordBtn');
+        const passwordInput = document.getElementById('register_password');
+        const toggleIcon = document.getElementById('toggleRegisterPasswordIcon');
+
+        if (toggleBtn && passwordInput && toggleIcon) {
+            toggleBtn.addEventListener('click', function () {
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                
+                toggleIcon.classList.toggle('fa-eye');
+                toggleIcon.classList.toggle('fa-eye-slash');
+            });
+        }
+    });
+</script>
 {% endblock %}

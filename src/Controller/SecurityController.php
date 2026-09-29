@@ -26,8 +26,14 @@ class SecurityController extends AbstractController
         
             // Redirige l'utilisateur s'il est déjà connecté
         if ($this->getUser()) {
+            // Si l'utilisateur est un Admin ou un Gestionnaire
+            if ($this->isGranted('ROLE_GESTIONNAIRE')) {
+                return $this->redirectToRoute('app_gestionnaire'); // Modifiez 'app_gestionnaire' par le nom exact de votre route
+            }
+
+            // Sinon, redirection par défaut pour un utilisateur simple
             return $this->redirectToRoute('app_home');
-        } 
+        }
 
         $response = $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,

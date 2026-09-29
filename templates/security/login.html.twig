@@ -3,53 +3,73 @@
 {% block title %}Connexion{% endblock %}
 
 {% block body %}
-<div class="container-fluid min-vh-100 d-flex flex-column justify-content-center {{ (is_webview is defined and is_webview) ? 'p-2' : 'py-4 bg-light' }}">
+{# Style personnalisé pour l'arrière-plan forêt et le champ mot de passe #}
+<style>
+    .bg-forest-gradient {
+        background: linear-gradient(135deg, #0d3b2e 0%, #114b5f 50%, #1a5e63 100%);
+    }
+    .toggle-password-btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        z-index: 5;
+    }
+</style>
+
+<div class="container-fluid min-vh-100 d-flex flex-column justify-content-center {{ (is_webview is defined and is_webview) ? 'p-2' : 'py-4 bg-forest-gradient' }}">
     <div class="row justify-content-center align-items-center w-100 m-0">
         
-        {# Image illustrative : Masquée dans la WebView Android pour économiser l'espace d'écran #}
+        {# Image illustrative : Masquée dans la WebView Android #}
         {% if is_webview is not defined or not is_webview %}
             <div class="col-md-6 col-lg-5 text-center mb-4 mb-md-0 d-none d-md-block">
-                <img src="{{ asset('img/logo.jpg') }}" class="img-fluid rounded shadow-sm" alt="Logo" style="max-height: 300px;">
+                <img src="{{ asset('img/logo.jpg') }}" class="img-fluid rounded shadow-lg" alt="Logo" style="max-height: 300px;">
             </div>
         {% endif %}
 
         {# Formulaire de connexion #}
         <div class="col-12 col-md-6 col-lg-4">
-            <div class="card {{ (is_webview is defined and is_webview) ? 'border-0 bg-transparent' : 'shadow-sm border-0' }}">
-                <div class="card-body {{ (is_webview is defined and is_webview) ? 'p-1' : 'p-4 bg-white rounded' }}">
+            <div class="card {{ (is_webview is defined and is_webview) ? 'border-0 bg-transparent' : 'shadow-lg border-0 rounded-4' }}">
+                <div class="card-body {{ (is_webview is defined and is_webview) ? 'p-1' : 'p-4 bg-white rounded-4' }}">
                     
-                    <h2 class="text-center fw-bold mb-4 h3">Connexion</h2>
+                    <h2 class="text-center fw-bold mb-4 h3 text-dark">Connexion</h2>
 
                     {# Affichage des erreurs d'authentification #}
                     {% if error %}
-                        <div class="alert alert-danger mb-3 p-2 small">
+                        <div class="alert alert-danger mb-3 p-2 small shadow-sm">
                             {{ error.messageKey|trans(error.messageData, 'security') }}
                         </div>
                     {% endif %}
 
                     {# Message si déjà connecté #}
                     {% if app.user %}
-                        <div class="alert alert-info mb-3 p-2 small text-center">
+                        <div class="alert alert-info mb-3 p-2 small text-center shadow-sm">
                             Vous êtes connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>.<br>
                             <a href="{{ path('app_logout') }}" class="alert-link">Se déconnecter</a>
                         </div>
                     {% endif %}
 
                     <form method="post">
-                        {# Champ Adresse Email (Floating Label Bootstrap 5) #}
+                        {# Champ Adresse Email #}
                         <div class="form-floating mb-3">
                             <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" placeholder="nom@exemple.com" required autofocus>
                             <label for="username">Adresse email</label>
                         </div>
 
-                        {# Champ Mot de passe (Floating Label Bootstrap 5) #}
-                        <div class="form-floating mb-3">
-                            <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" placeholder="Mot de passe" required>
-                            <label for="password">Mot de passe</label>
+                        {# Champ Mot de passe avec bouton Voir/Masquer #}
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <div class="form-floating flex-grow-1">
+                                    <input type="password" name="_password" id="password" class="form-control border-end-0" autocomplete="current-password" placeholder="Mot de passe" required>
+                                    <label for="password">Mot de passe</label>
+                                </div>
+                                <button class="btn btn-outline-secondary toggle-password-btn px-3" type="button" id="togglePasswordBtn" title="Afficher/Masquer le mot de passe">
+                                    <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                </button>
+                            </div>
                         </div>
 
                         {# Jeton de sécurité CSRF #}
                         <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
                         {# Bouton de connexion #}
                         <button class="btn btn-primary btn-lg w-100 shadow-sm mt-2" type="submit">
                             Se connecter
@@ -70,10 +90,31 @@
     </div>
 </div>
 
-{# Footer Web classique : Masqué sur la WebView #}
+{# Footer Web classique #}
 {% if is_webview is not defined or not is_webview %}
     <footer class="bg-white border-top text-center py-3 mt-auto">
         <small class="text-muted">Copyright © {{ "now"|date("Y") }} - Tous droits réservés.</small>
     </footer>
 {% endif %}
+
+{# Script JavaScript pour basculer la visibilité du mot de passe #}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+        const passwordInput = document.getElementById('password');
+        const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+
+        if (togglePasswordBtn && passwordInput && togglePasswordIcon) {
+            togglePasswordBtn.addEventListener('click', function () {
+                // Bascule entre type password et text
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                
+                // Changement de l'icône de l'œil
+                togglePasswordIcon.classList.toggle('fa-eye');
+                togglePasswordIcon.classList.toggle('fa-eye-slash');
+            });
+        }
+    });
+</script>
 {% endblock %}
