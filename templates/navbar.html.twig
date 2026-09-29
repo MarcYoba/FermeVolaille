@@ -1,129 +1,164 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
+    
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        
+        <!-- Home -->
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{ path('app_home') }}">Home</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Suivi technique 
+          <a class="nav-link active" aria-current="page" href="{{ path('app_home') }}">
+            <i class="fas fa-home me-1"></i> Accueil
           </a>
-          <div class="dropdown-menu mega-menu p-3" aria-labelledby="dropdownFinance">
+        </li>
+
+        <!-- Suivi technique -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownTechnique" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-cogs me-1"></i> Suivi technique
+          </a>
+          <div class="dropdown-menu mega-menu p-3" aria-labelledby="navbarDropdownTechnique">
             <div class="row">
-              <div class="col-lg-4 col-sm-6 mb-3 mb-lg-0">
-                <h6 class="dropdown-header"><i class="fas fa-money-bill-wave me-1"></i> Fermes</h6>
-                <a class="dropdown-item" href="{{ path('app_fermes')}}">Ajouter une ferme</a>
-                <a class="dropdown-item" href="{{ path('app_fremes_list')}}">List ferme</a>
+              <div class="col-lg-12">
+                <h6 class="dropdown-header"><i class="fas fa-warehouse me-1"></i> Fermes</h6>
+                <a class="dropdown-item" href="{{ path('app_fermes')}}"><i class="fas fa-plus-circle me-2"></i>Ajouter une ferme</a>
+                <a class="dropdown-item" href="{{ path('app_fremes_list')}}"><i class="fas fa-list me-2"></i>Liste fermes</a>
+                
                 <div class="dropdown-divider"></div>
-                <h6 class="dropdown-header">Produit </h6>
+                <h6 class="dropdown-header"><i class="fas fa-box me-1"></i> Produits</h6>
                 <a class="dropdown-item" href="{{ path('app_produit')}}"><i class="fas fa-plus-circle me-2"></i>Ajouter produit</a>
-                <a class="dropdown-item" href="{{ path('app_produit_list')}}"><i class="fas fa-list me-2"></i>List produit</a>
-                <h6 class="dropdown-header">Bandes </h6>
+                <a class="dropdown-item" href="{{ path('app_produit_list')}}"><i class="fas fa-list me-2"></i>Liste produits</a>
+                
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header"><i class="fas fa-layer-group me-1"></i> Bandes</h6>
                 <a class="dropdown-item" href="{{ path('app_bandes')}}"><i class="fas fa-plus-circle me-2"></i>Ajouter Bandes</a>
-                <a class="dropdown-item" href="{{ path('app_bandes_liste')}}"><i class="fas fa-list me-2"></i>List Bandes</a>
+                <a class="dropdown-item" href="{{ path('app_bandes_liste')}}"><i class="fas fa-list me-2"></i>Liste Bandes</a>
               </div>
-              
             </div>
           </div>
-          
         </li>
+
+        <!-- Suivi sanitaire -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Suivi sanitaire 
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSanitaire" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-heartbeat me-1"></i> Suivi sanitaire
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="{{ path('app_suivi') }}">Suivi journalier</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_suivi_list') }}">Liste Suivi</a></li>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownSanitaire">
+            <li><a class="dropdown-item" href="{{ path('app_suivi') }}"><i class="fas fa-notes-medical me-2"></i>Suivi journalier</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_suivi_list') }}"><i class="fas fa-clipboard-list me-2"></i>Liste Suivi</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_pesees') }}">Pesees journalier</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_pesees_list') }}">Liste Pesees</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_pesees') }}"><i class="fas fa-weight me-2"></i>Pesées journalières</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_pesees_list') }}"><i class="fas fa-list-alt me-2"></i>Liste Pesées</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_mouvement_stock') }}">Alimentation journalier</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_mouvement_stock_list') }}">Liste Alimentation</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_mouvement_stock') }}"><i class="fas fa-utensils me-2"></i>Alimentation journalière</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_mouvement_stock_list') }}"><i class="fas fa-list-ol me-2"></i>Liste Alimentation</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_vaccination') }}">Vaccination</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_vaccination_list') }}">Liste Vaccination</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_vaccination') }}"><i class="fas fa-syringe me-2"></i>Vaccination</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_vaccination_list') }}"><i class="fas fa-list me-2"></i>Liste Vaccination</a></li>
           </ul>
         </li>
+
+        <!-- Suivi des stocks -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Suivi des stocks 
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownStocks" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-boxes me-1"></i> Suivi des stocks
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="{{ path('app_magasin') }}">Ajouter produit</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_magasin_list') }}">Liste magasin</a></li>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownStocks">
+            <li><a class="dropdown-item" href="{{ path('app_magasin') }}"><i class="fas fa-plus-circle me-2"></i>Ajouter produit</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_magasin_list') }}"><i class="fas fa-store me-2"></i>Liste magasin</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_achat') }}">Ajouter Achat</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_achat_list') }}">Lists Achat</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_achat') }}"><i class="fas fa-shopping-cart me-2"></i>Ajouter Achat</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_achat_list') }}"><i class="fas fa-receipt me-2"></i>Liste Achats</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_aliment') }}">Ajouter Aliment</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_aliment_list') }}">Liste Aliments</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_aliment') }}"><i class="fas fa-seedling me-2"></i>Ajouter Aliment</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_aliment_list') }}"><i class="fas fa-list me-2"></i>Liste Aliments</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_approvisionnement_nouveau') }}">Ajouter Medicament</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_approvisionnement_list') }}">Liste Medicament</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_approvisionnement_nouveau') }}"><i class="fas fa-pills me-2"></i>Ajouter Médicament</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_approvisionnement_list') }}"><i class="fas fa-list me-2"></i>Liste Médicaments</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_delivrance_nouvelle') }}">Sortie medicament</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_delivrance_list') }}">Liste Sortie medicament</a></li> 
+            <li><a class="dropdown-item" href="{{ path('app_delivrance_nouvelle') }}"><i class="fas fa-file-medical-alt me-2"></i>Sortie médicament</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_delivrance_list') }}"><i class="fas fa-list me-2"></i>Liste Sorties médicament</a></li> 
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_dashboard') }}">Tableau de Bord</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_dashboard') }}"><i class="fas fa-chart-line me-2"></i>Tableau de Bord</a></li>
           </ul>
         </li>
+
+        <!-- Suivi financier -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Suivi financier  
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownFinancier" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-wallet me-1"></i> Suivi financier
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFinancier">
+            <li><a class="dropdown-item" href="#"><i class="fas fa-file-invoice-dollar me-2"></i>Factures</a></li>
+            <li><a class="dropdown-item" href="#"><i class="fas fa-chart-pie me-2"></i>Dépenses</a></li>
           </ul>
         </li>
+
+        <!-- Performances zootechniques -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Suivi des performances zootechniques  
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownZootech" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-chart-bar me-1"></i> Performances
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="{{ path('app_bloc')}}">Ajouter Bloc</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_bloc_list')}}">List Bloc</a></li>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownZootech">
+            <li><a class="dropdown-item" href="{{ path('app_bloc')}}"><i class="fas fa-plus-circle me-2"></i>Ajouter Bloc</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_bloc_list')}}"><i class="fas fa-th-large me-2"></i>Liste Blocs</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_batiments')}}">Ajouter batiment</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_batiments_list')}}">List batiment</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_batiments')}}"><i class="fas fa-plus-circle me-2"></i>Ajouter bâtiment</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_batiments_list')}}"><i class="fas fa-building me-2"></i>Liste bâtiments</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_transfert_batiment_list_bande')}}">List Transfert</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_transfert_batiment_list_bande')}}"><i class="fas fa-exchange-alt me-2"></i>Liste Transferts</a></li>
           </ul>
         </li>
+
+        <!-- Administration -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Rapports 
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-shield me-1"></i> Administration
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Admintration 
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="{{ path('app_user') }}">Creation compte</a></li>
-            <li><a class="dropdown-item" href="{{ path('app_user_liste') }}">List utilisateur</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ path('app_logout')}}">Deconnexion</a></li>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+            <li><a class="dropdown-item" href="{{ path('app_user') }}"><i class="fas fa-user-plus me-2"></i>Création de compte</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_user_liste') }}"><i class="fas fa-users me-2"></i>Liste utilisateurs</a></li>
           </ul>
         </li>
       </ul>
-      {# <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form> #}
+
+      <!-- Section Espace Compte Utilisateur (Alignée à droite) -->
+      <ul class="navbar-nav ms-auto">
+        {% if app.user %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdownProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle fa-lg me-1"></i> {{ app.user.userIdentifier }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownProfile">
+              <li>
+                <a class="dropdown-item" href="{{ path('app_profile') }}">
+                  <i class="fas fa-id-card me-2"></i>Mon Profil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ path('app_change_password') }}">
+                  <i class="fas fa-key me-2"></i>Changer mot de passe
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+                  <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                </a>
+              </li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_login') }}">
+              <i class="fas fa-sign-in-alt me-1"></i> Connexion
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+
     </div>
   </div>
 </nav>

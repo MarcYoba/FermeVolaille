@@ -1,50 +1,157 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello UserController!{% endblock %}
+{% block title %}Gestion des Utilisateurs{% endblock %}
 
 {% block body %}
 {% include "navbar.html.twig" %}
-<section class="vh-100" style="background-color: #eee;">
-  <div class="container h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-lg-12 col-xl-11">
-        <div class="card text-black" style="border-radius: 25px;">
-          <div class="card-body p-md-5">
-            <div class="row justify-content-center">
 
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Telephone</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Role</th>
-                            <th scope="col">Operation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in users %}
-                            <tr>
-                                <th scope="row">{{ user.id }}</th>
-                                <td>{{ user.nom }}</td>
-                                <td>{{ user.telephone }}</td>
-                                <td>{{ user.email }}</td>
-                                <td>{{ user.roles|join(', ') }}</td>
-                                <td>
-                                    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary">Edit</a>
-                                    <a href="{{ path('app_user_delete', {'id': user.id}) }}" class="btn btn-danger">Delete</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            
+            {# Messages de confirmation / d'erreur #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3 rounded-top-4">
+                    <h4 class="mb-0 fs-5 fw-bold"><i class="bi bi-people-fill me-2"></i>Liste des Utilisateurs</h4>
+                    <span class="badge bg-light text-primary fs-6">{{ users|length }} utilisateur(s)</span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="text-secondary">ID</th>
+                                    <th scope="col" class="text-secondary">Nom</th>
+                                    <th scope="col" class="text-secondary">Téléphone</th>
+                                    <th scope="col" class="text-secondary">Email</th>
+                                    <th scope="col" class="text-secondary">Rôles</th>
+                                    <th scope="col" class="text-center text-secondary">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr>
+                                        <td class="fw-bold text-muted">#{{ user.id }}</td>
+                                        <td class="fw-semibold">{{ user.nom }}</td>
+                                        <td>{{ user.telephone ?? 'Non renseigné' }}</td>
+                                        <td><a href="mailto:{{ user.email }}" class="text-decoration-none">{{ user.email }}</a></td>
+                                        <td>
+                                            {# Badges personnalisés selon les rôles #}
+                                            {% for role in user.roles %}
+                                                {% if role == 'ROLE_ADMIN' %}
+                                                    <span class="badge bg-danger">ADMIN</span>
+                                                {% elseif role == 'ROLE_GESTIONNAIRE' %}
+                                                    <span class="badge bg-primary">GESTIONNAIRE</span>
+                                                {% elseif role == 'ROLE_BLOC' %}
+                                                    <span class="badge bg-warning text-dark">BLOC</span>
+                                                {% elseif role == 'ROLE_POULAILLER' %}
+                                                    <span class="badge bg-success">POULAILLER</span>
+                                                {% elseif role == 'ROLE_SALLE' %}
+                                                    <span class="badge bg-info text-dark">SALLE</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ role }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-outline-primary btn-sm">Éditer</a>
+
+                                                <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalRole{{ user.id }}">
+                                                    Rôle
+                                                </button>
+
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalPassword{{ user.id }}">
+                                                    Mot de passe
+                                                </button>
+
+                                                <a href="{{ path('app_user_delete', {'id': user.id}) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                                                    Supprimer
+                                                </a>
+                                            </div>
+
+                                            <!-- Modal Changement de Rôle -->
+                                            <div class="modal fade" id="modalRole{{ user.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content text-start">
+                                                        <form action="{{ path('app_user_change_role', {'id': user.id}) }}" method="POST">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Changer le rôle de {{ user.nom }}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('change_role_' ~ user.id) }}">
+                                                                <div class="mb-3">
+                                                                    <label for="roleSelect{{ user.id }}" class="form-label fw-bold">Sélectionnez un rôle :</label>
+                                                                    <select name="role" id="roleSelect{{ user.id }}" class="form-select">
+                                                                        <option value="ROLE_USER" {{ 'ROLE_USER' in user.roles ? 'selected' : '' }}>Utilisateur simple (ROLE_USER)</option>
+                                                                        <option value="ROLE_ADMIN" {{ 'ROLE_ADMIN' in user.roles ? 'selected' : '' }}>Administrateur (ROLE_ADMIN)</option>
+                                                                        <option value="ROLE_GESTIONNAIRE" {{ 'ROLE_GESTIONNAIRE' in user.roles ? 'selected' : '' }}>Gestionnaire (ROLE_GESTIONNAIRE)</option>
+                                                                        <option value="ROLE_BLOC" {{ 'ROLE_BLOC' in user.roles ? 'selected' : '' }}>Responsable Bloc (ROLE_BLOC)</option>
+                                                                        <option value="ROLE_POULAILLER" {{ 'ROLE_POULAILLER' in user.roles ? 'selected' : '' }}>Responsable Poulailler (ROLE_POULAILLER)</option>
+                                                                        <option value="ROLE_SALLE" {{ 'ROLE_SALLE' in user.roles ? 'selected' : '' }}>Responsable Salle (ROLE_SALLE)</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                                <button type="submit" class="btn btn-warning">Enregistrer le rôle</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Modal Changement de Mot de Passe -->
+                                            <div class="modal fade" id="modalPassword{{ user.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content text-start">
+                                                        <form action="{{ path('app_user_change_password', {'id': user.id}) }}" method="POST">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Modifier le mot de passe de {{ user.nom }}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('change_password_' ~ user.id) }}">
+                                                                <div class="mb-3">
+                                                                    <label for="newPassword{{ user.id }}" class="form-label fw-bold">Nouveau mot de passe :</label>
+                                                                    <input type="password" name="new_password" id="newPassword{{ user.id }}" class="form-control" placeholder="••••••••" required minlength="6">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                                <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted">
+                                            Aucun utilisateur trouvé.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
+
         </div>
-      </div>
     </div>
-  </div>
-</section>
+</div>
 {% endblock %}

@@ -13,10 +13,7 @@ class SecurityController extends AbstractController
     #[Route(path: '/', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
-        // Redirige l'utilisateur s'il est déjà connecté
-        if ($this->getUser()) {
-            return $this->redirectToRoute('app_home');
-        }    
+           
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
@@ -26,6 +23,11 @@ class SecurityController extends AbstractController
         // Détection de la WebView Android
         $isWebView = $request->headers->has('X-App-WebView') 
             || $request->headers->get('X-Requested-With') === 'com.tonentreprise.tonapp';
+        
+            // Redirige l'utilisateur s'il est déjà connecté
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_home');
+        } 
 
         $response = $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
