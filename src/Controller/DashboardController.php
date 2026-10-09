@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CoutSanitaire;
+use App\Entity\FicheProduction;
 use App\Entity\Lot;
 use App\Entity\Medicament;
 use App\Entity\Sortie;
@@ -61,6 +62,7 @@ class DashboardController extends AbstractController
 
         // 6. 5 Dernières transactions (Délivrances)
         $dernieresSorties = $em->getRepository(Sortie::class)->findBy([], ['dateSortie' => 'DESC'], 5);
+        $ficheProductions = $em->getRepository(FicheProduction::class)->findAll();
 
         return $this->render('dashboard/index.html.twig', [
             'chiffreAffaires' => $chiffreAffaires,
@@ -69,6 +71,7 @@ class DashboardController extends AbstractController
             'countLotsPerimes' => $countLotsPerimes,
             'medicamentsAlerteStock' => $medicamentsAlerteStock,
             'dernieresSorties' => $dernieresSorties,
+            'dernieresProductions' => $ficheProductions,
         ]);
     }
 }

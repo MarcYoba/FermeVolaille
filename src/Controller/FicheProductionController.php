@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/fiche/production')]
 final class FicheProductionController extends AbstractController
@@ -87,6 +88,7 @@ final class FicheProductionController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_fiche_production_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')] // 👈 Restriction par rôle
     public function edit(Request $request, FicheProduction $ficheProduction, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(FicheProductionType::class, $ficheProduction);
@@ -140,7 +142,8 @@ final class FicheProductionController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_fiche_production_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_fiche_production_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')] // 👈 Restriction par rôle
     public function delete(Request $request, FicheProduction $ficheProduction, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$ficheProduction->getId(), $request->getPayload()->getString('_token'))) {

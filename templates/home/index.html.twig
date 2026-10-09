@@ -276,6 +276,80 @@
             </div>
         </div>
 
+        {# HISTORIQUE DES DERNIÈRES PRODUCTIONS #}
+        <div class="card border-0 shadow-sm mb-4 rounded-3 overflow-hidden" style="background-color: #2d4a3e;">
+            <div class="card-header border-0 py-2 py-md-3 d-flex justify-content-between align-items-center small" style="background-color: #14281d; color: #a7f3d0;">
+                <span class="fw-bold fs-6">
+                    <i class="bi bi-gear-wide-connected me-2"></i>Dernières Fiches de Production
+                </span>
+                <a href="{{ path('app_fiche_production_index') }}" class="btn btn-sm btn-outline-light">
+                    <i class="bi bi-clock-history me-1"></i>Voir tout
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 text-white border-0 {{ (is_webview is defined and is_webview) ? 'table-sm small' : '' }}">
+                        <thead style="background-color: #1b3829;">
+                            <tr class="small text-uppercase" style="color: #a7f3d0;">
+                                <th class="ps-3 py-3"><i class="bi bi-hash me-1"></i>ID</th>
+                                <th class="py-3"><i class="bi bi-box-seam me-1"></i>Produit</th>
+                                <th class="py-3 text-center"><i class="bi bi-diagram-3 me-1"></i>Composants</th>
+                                <th class="py-3 text-end"><i class="bi bi-calculator me-1"></i>Qté Totale</th>
+                                <th class="d-none d-sm-table-cell py-3"><i class="bi bi-person me-1"></i>Auteur</th>
+                                <th class="py-3"><i class="bi bi-calendar3 me-1"></i>Date</th>
+                                <th class="text-center py-3" style="width: 100px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-top-0">
+                        {% for fiche in dernieresProductions|slice(0, 10) %}
+                            <tr style="border-bottom-color: #3d6352;">
+                                <td class="ps-3 fw-bold opacity-75">#{{ fiche.id }}</td>
+                                <td>
+                                    {% if fiche.produit %}
+                                        <span class="badge text-dark fw-bold px-2 py-1" style="background-color: #d8f3dc;">
+                                            {{ fiche.produit.nom }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-white-50 fst-italic">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge text-dark rounded-pill px-2 py-1" style="background-color: #52b788;">
+                                        {{ fiche.lignes|length }}
+                                    </span>
+                                </td>
+                                <td class="text-end fw-bold" style="color: #74c69d;">
+                                    {{ fiche.totalQuantite|number_format(2, ',', ' ') }}
+                                </td>
+                                <td class="d-none d-sm-table-cell text-white-50">
+                                    {{ fiche.user ? (fiche.user.username ?? fiche.user.email) : 'Inconnu' }}
+                                </td>
+                                <td>
+                                    <span class="text-nowrap small">
+                                        {{ fiche.createdAt ? fiche.createdAt|date('d/m H:i') : '-' }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{ path('app_fiche_production_show', {'id': fiche.id}) }}" 
+                                    class="btn btn-sm btn-outline-info py-0 px-2" 
+                                    title="Consulter">
+                                        Voir
+                                    </a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center text-white-50 py-4 fst-italic">
+                                    <i class="bi bi-inbox me-1"></i>Aucune production récente enregistrée.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         {# 4. GRAPHIQUE D'ÉVOLUTION #}
         <div class="card border border-secondary-subtle shadow-sm rounded-3 overflow-hidden">
             <div class="card-header bg-light fw-bold text-dark border-bottom border-secondary-subtle py-2 py-md-3 small d-flex align-items-center">
