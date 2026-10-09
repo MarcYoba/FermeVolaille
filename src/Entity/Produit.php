@@ -46,12 +46,26 @@ class Produit
     #[ORM\OneToMany(targetEntity: MagasinDedier::class, mappedBy: 'produit')]
     private Collection $magasinDediers;
 
+    /**
+     * @var Collection<int, FicheProduction>
+     */
+    #[ORM\OneToMany(targetEntity: FicheProduction::class, mappedBy: 'produit')]
+    private Collection $ficheProductions;
+
+    /**
+     * @var Collection<int, LigneProduction>
+     */
+    #[ORM\OneToMany(targetEntity: LigneProduction::class, mappedBy: 'produit')]
+    private Collection $ligneProductions;
+
 
     public function __construct()
     {
         $this->magasins = new ArrayCollection();
         $this->achats = new ArrayCollection();
         $this->magasinDediers = new ArrayCollection();
+        $this->ficheProductions = new ArrayCollection();
+        $this->ligneProductions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -191,6 +205,66 @@ class Produit
             // set the owning side to null (unless already changed)
             if ($magasinDedier->getProduit() === $this) {
                 $magasinDedier->setProduit(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FicheProduction>
+     */
+    public function getFicheProductions(): Collection
+    {
+        return $this->ficheProductions;
+    }
+
+    public function addFicheProduction(FicheProduction $ficheProduction): static
+    {
+        if (!$this->ficheProductions->contains($ficheProduction)) {
+            $this->ficheProductions->add($ficheProduction);
+            $ficheProduction->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFicheProduction(FicheProduction $ficheProduction): static
+    {
+        if ($this->ficheProductions->removeElement($ficheProduction)) {
+            // set the owning side to null (unless already changed)
+            if ($ficheProduction->getProduit() === $this) {
+                $ficheProduction->setProduit(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LigneProduction>
+     */
+    public function getLigneProductions(): Collection
+    {
+        return $this->ligneProductions;
+    }
+
+    public function addLigneProduction(LigneProduction $ligneProduction): static
+    {
+        if (!$this->ligneProductions->contains($ligneProduction)) {
+            $this->ligneProductions->add($ligneProduction);
+            $ligneProduction->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneProduction(LigneProduction $ligneProduction): static
+    {
+        if ($this->ligneProductions->removeElement($ligneProduction)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneProduction->getProduit() === $this) {
+                $ligneProduction->setProduit(null);
             }
         }
 

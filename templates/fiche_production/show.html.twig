@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails Fiche de Production #{{ fiche_production.id }}{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<div class="min-vh-100 py-4" style="background-color: #1b3b2b;">
+    <div class="container">
+        <!-- En-tête et Boutons de retour/actions -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 text-white m-0 fw-bold">
+                Fiche de Production #{{ fiche_production.id }}
+            </h1>
+            <a href="{{ path('app_fiche_production_index') }}" class="btn btn-outline-light">
+                &larr; Retour à la liste
+            </a>
+        </div>
+
+        <!-- Section 1 : Informations Générales -->
+        <div class="card shadow-lg border-0 rounded-3 overflow-hidden mb-4" style="background-color: #2d4a3e;">
+            <div class="card-header text-uppercase small fw-bold py-3" style="background-color: #14281d; color: #a7f3d0;">
+                Informations Générales
+            </div>
+            <div class="card-body text-white">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <span class="text-white-50 d-block small">Identifiant (#ID)</span>
+                        <span class="fw-bold fs-5">{{ fiche_production.id }}</span>
+                    </div>
+                    {# <div class="col-md-3">
+                        <span class="text-white-50 d-block small">Produit Principal</span>
+                        {% if fiche_production.produit %}
+                            <span class="badge text-dark fw-bold px-3 py-2 mt-1" style="background-color: #d8f3dc;">
+                                {{ fiche_production.produit.nom }}
+                            </span>
+                        {% else %}
+                            <span class="text-white-50 fst-italic">Non spécifié</span>
+                        {% endif %}
+                    </div> #}
+                    <div class="col-md-3">
+                        <span class="text-white-50 d-block small">Créé par</span>
+                        <span class="fw-semibold">
+                            {{ fiche_production.user ? (fiche_production.user.username ?? fiche_production.user.email) : 'Inconnu' }}
+                        </span>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-white-50 d-block small">Date de Création</span>
+                        <span class="fw-semibold">
+                            {{ fiche_production.createdAt ? fiche_production.createdAt|date('d/m/Y à H:i') : '-' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2 : Lignes de Production (Composants / Ingrédients) -->
+        <div class="card shadow-lg border-0 rounded-3 overflow-hidden mb-4" style="background-color: #2d4a3e;">
+            <div class="card-header text-uppercase small fw-bold py-3 d-flex justify-content-between align-items-center" style="background-color: #14281d; color: #a7f3d0;">
+                <span>Composants / Ingrédients de Production</span>
+                <span class="badge text-dark rounded-pill px-3 py-1" style="background-color: #52b788;">
+                    {{ fiche_production.lignes|length }} ligne(s)
+                </span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-white border-0">
+                    <thead style="background-color: #1b3829;">
+                        <tr class="small" style="color: #a7f3d0;">
+                            <th class="ps-4 py-3">Composant / Ingrédient</th>
+                            <th class="py-3 text-end pe-4" style="width: 250px;">Quantité</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                    {% for ligne in fiche_production.lignes %}
+                        <tr style="border-bottom-color: #3d6352;">
+                            <td class="ps-4 fw-semibold">{{ ligne.produit.nom | default(0) }}</td>
+                            <td class="text-end pe-4 fw-bold" style="color: #74c69d;">
+                                {{ ligne.quantite|number_format(2, ',', ' ') }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="2" class="text-center py-4 text-white-50 fst-italic">
+                                Aucun composant associé à cette fiche de production.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold text-white" style="background-color: #14281d;">
+                            <td class="ps-4 py-3 text-uppercase">Quantité Totale Cumulée</td>
+                            <td class="text-end pe-4 py-3 fs-5" style="color: #74c69d;">
+                                {{ fiche_production.totalQuantite|number_format(2, ',', ' ') }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 3 : Actions -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <a href="{{ path('app_fiche_production_edit', {'id': fiche_production.id}) }}" class="btn btn-warning px-4 fw-semibold">
+                Modifier cette fiche
+            </a>
+            
+            <div class="delete-action-wrapper">
+                {{ include('fiche_production/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
