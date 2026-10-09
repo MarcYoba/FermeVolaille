@@ -171,6 +171,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: TransfertBatiment::class, mappedBy: 'user')]
     private Collection $transfertBatiments;
 
+    /**
+     * @var Collection<int, FicheProduction>
+     */
+    #[ORM\OneToMany(targetEntity: FicheProduction::class, mappedBy: 'user')]
+    private Collection $ficheProductions;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -194,6 +200,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->coutSanitaires = new ArrayCollection();
         $this->vaccinations = new ArrayCollection();
         $this->transfertBatiments = new ArrayCollection();
+        $this->ficheProductions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -937,6 +944,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($transfertBatiment->getUser() === $this) {
                 $transfertBatiment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FicheProduction>
+     */
+    public function getFicheProductions(): Collection
+    {
+        return $this->ficheProductions;
+    }
+
+    public function addFicheProduction(FicheProduction $ficheProduction): static
+    {
+        if (!$this->ficheProductions->contains($ficheProduction)) {
+            $this->ficheProductions->add($ficheProduction);
+            $ficheProduction->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFicheProduction(FicheProduction $ficheProduction): static
+    {
+        if ($this->ficheProductions->removeElement($ficheProduction)) {
+            // set the owning side to null (unless already changed)
+            if ($ficheProduction->getUser() === $this) {
+                $ficheProduction->setUser(null);
             }
         }
 

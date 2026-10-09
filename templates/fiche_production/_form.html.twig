@@ -1,0 +1,228 @@
+{{ form_start(form) }}
+
+    <!-- SECTION HAUTE : Produit, Quantité, Date, Bouton Ajouter -->
+    <div class="row g-3 mb-4 align-items-end">
+        <div class="col-md-4">
+            {{ form_label(form.produit, null, {'label_attr': {'class': 'form-label text-white fw-semibold'}}) }}
+            {{ form_widget(form.produit, {'attr': {'class': 'form-select', 'id': 'select-produit'}}) }}
+            {{ form_errors(form.produit) }}
+        </div>
+        <div class="col-md-3">
+            {{ form_label(form.quantiteSaisie, null, {'label_attr': {'class': 'form-label text-white fw-semibold'}}) }}
+            {{ form_widget(form.quantiteSaisie, {'attr': {'class': 'form-control', 'id': 'input-quantite', 'placeholder': 'Ex: 10'}}) }}
+            {{ form_errors(form.quantiteSaisie) }}
+        </div>
+        <div class="col-md-3">
+            {{ form_label(form.createdAt, null, {'label_attr': {'class': 'form-label text-white fw-semibold'}}) }}
+            {{ form_widget(form.createdAt, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.createdAt) }}
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn fw-bold w-100" id="add-line-btn" style="background-color: #52b788; color: #081c15;">
+                + Ajouter
+            </button>
+        </div>
+    </div>
+
+    <hr class="my-4" style="border-color: #3d6352;">
+
+    <!-- SECTION BASSE : Tableau des Composants -->
+    <h5 class="mb-3 text-uppercase small fw-bold" style="color: #a7f3d0;">
+        Liste des composants / ingrédients
+    </h5>
+
+    <div class="table-responsive mb-4">
+        <table class="table align-middle text-white border-0" id="tableau-production">
+            <thead style="background-color: #14281d;">
+                <tr class="small text-uppercase" style="color: #a7f3d0;">
+                    <th class="ps-3 py-3">Composant / Ingrédient</th>
+                    <th class="py-3" style="width: 200px;">Quantité</th>
+                    <th class="py-3 text-center" style="width: 130px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="lignes-container"
+                   data-prototype="{{ form_widget(form.lignes.vars.prototype)|e('html_attr') }}"
+                   data-index="{{ form.lignes|length }}"
+                   class="border-top-0">
+                {% for ligneForm in form.lignes %}
+                    <tr class="ligne-row" style="border-bottom-color: #3d6352;">
+                        <td>{{ form_widget(ligneForm.nom, {'attr': {'class': 'form-control'}}) }}</td>
+                        <td>{{ form_widget(ligneForm.quantite, {'attr': {'class': 'form-control quantite-input'}}) }}</td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-warning edit-line" title="Modifier cette ligne">
+                                    ✏️
+                                </button>
+                                <button type="button" class="btn btn-outline-danger remove-line" title="Supprimer cette ligne">
+                                    &times;
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="fw-bold" style="background-color: #14281d;">
+                    <td class="ps-3 py-3">TOTAL CALCULÉ</td>
+                    <td id="total-quantite" class="py-3 fs-5" style="color: #74c69d;">0.00</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Champ Quantité Totale caché/lecture seule -->
+    <div class="row mb-4">
+        <div class="col-md-4 ms-auto">
+            {{ form_label(form.quantiteTotale, null, {'label_attr': {'class': 'form-label text-white fw-semibold'}}) }}
+            {{ form_widget(form.quantiteTotale, {'attr': {'class': 'form-control fw-bold', 'readonly': 'readonly', 'style': 'background-color: #1b3829; color: #74c69d;'}}) }}
+        </div>
+    </div>
+
+    <!-- Bouton de soumission du formulaire -->
+    <div class="d-flex justify-content-end pt-3 border-top" style="border-color: #3d6352;">
+        <button type="submit" class="btn btn-success px-4 py-2 fw-bold shadow-sm">
+            {{ button_label|default('Enregistrer la fiche') }}
+        </button>
+    </div>
+
+{{ form_end(form) }}
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('lignes-container');
+    const addBtn = document.getElementById('add-line-btn');
+    const selectProduit = document.getElementById('fiche_production_produit');
+    const inputQuantite = document.getElementById('fiche_production_quantiteSaisie');
+    const totalEl = document.getElementById('total-quantite');
+    const inputTotal = document.getElementById('{{ form.quantiteTotale.vars.id }}');
+
+    function calculateTotal() {
+        let total = 0;
+        document.querySelectorAll('.quantite-input').forEach(input => {
+            const val = parseFloat(input.value) || 0;
+            total += val;
+        });
+
+        const formattedTotal = total.toFixed(2);
+        if (totalEl) totalEl.textContent = formattedTotal;
+        if (inputTotal) inputTotal.value = formattedTotal;
+    }
+
+    function addRow() {
+        const selectedOption = selectProduit.options[selectProduit.selectedIndex];
+        const produitText = selectedOption ? selectedOption.text.trim() : '';
+        const quantiteVal = inputQuantite.value.trim();
+
+        if (!selectProduit.value || produitText.startsWith('--')) {
+            alert('Veuillez sélectionner un produit.');
+            return;
+        }
+
+        if (!quantiteVal || isNaN(quantiteVal) || parseFloat(quantiteVal) <= 0) {
+            alert('Veuillez saisir une quantité valide.');
+            return;
+        }
+
+        const index = container.dataset.index;
+        const prototype = container.dataset.prototype;
+
+        const newFormHtml = prototype.replace(/__name__/g, index);
+        container.dataset.index = parseInt(index) + 1;
+
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newFormHtml;
+
+        const nomInput = tempDiv.querySelector('[name*="[nom]"]');
+        const quantiteInput = tempDiv.querySelector('[name*="[quantite]"]');
+
+        if (!nomInput || !quantiteInput) {
+            console.error("Impossible de trouver les champs 'nom' ou 'quantite' dans le prototype.");
+            return;
+        }
+
+        nomInput.value = produitText;
+        quantiteInput.value = quantiteVal;
+
+        nomInput.setAttribute('readonly', 'readonly');
+        nomInput.classList.add('form-control');
+        
+        quantiteInput.classList.add('form-control', 'quantite-input');
+
+        const tr = document.createElement('tr');
+        tr.className = 'ligne-row';
+        tr.style.borderBottomColor = '#3d6352';
+
+        tr.innerHTML = `
+            <td></td>
+            <td></td>
+            <td class="text-center">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-warning edit-line" title="Modifier cette ligne">✏️</button>
+                    <button type="button" class="btn btn-outline-danger remove-line" title="Supprimer cette ligne">&times;</button>
+                </div>
+            </td>
+        `;
+
+        tr.children[0].appendChild(nomInput);
+        tr.children[1].appendChild(quantiteInput);
+
+        container.appendChild(tr);
+
+        quantiteInput.addEventListener('input', calculateTotal);
+
+        selectProduit.selectedIndex = 0;
+        inputQuantite.value = '';
+
+        calculateTotal();
+    }
+
+    if (addBtn) {
+        addBtn.addEventListener('click', addRow);
+    }
+
+    // Gestion des clics dans le tableau (Édition et Suppression)
+    container.addEventListener('click', (e) => {
+        const target = e.target;
+        const tr = target.closest('tr');
+
+        // ACTION MODIFIER LA LIGNE
+        if (target.classList.contains('edit-line')) {
+            const nomInput = tr.querySelector('[name*="[nom]"]');
+            const quantiteInput = tr.querySelector('[name*="[quantite]"]');
+
+            if (nomInput && quantiteInput) {
+                // 1. Chercher le produit dans la liste déroulante du haut
+                const options = Array.from(selectProduit.options);
+                const matchingOption = options.find(opt => opt.text.trim() === nomInput.value.trim());
+
+                if (matchingOption) {
+                    selectProduit.value = matchingOption.value;
+                }
+
+                // 2. Remplir le champ quantité en haut
+                inputQuantite.value = quantiteInput.value;
+
+                // 3. Supprimer la ligne du tableau
+                tr.remove();
+
+                // 4. Recalculer le total et remettre le focus sur la quantité
+                calculateTotal();
+                inputQuantite.focus();
+            }
+        }
+
+        // ACTION SUPPRIMER LA LIGNE
+        if (target.classList.contains('remove-line')) {
+            tr.remove();
+            calculateTotal();
+        }
+    });
+
+    document.querySelectorAll('.quantite-input').forEach(input => {
+        input.addEventListener('input', calculateTotal);
+    });
+
+    calculateTotal();
+});
+</script>

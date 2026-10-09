@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Fiches de Production{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<div class="min-vh-100 py-4" style="background-color: #1b3b2b;">
+    <div class="container">
+        <!-- En-tête -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 text-white m-0 fw-bold">Fiches de Production</h1>
+            <a href="{{ path('app_fiche_production_new') }}" class="btn btn-success fw-semibold shadow-sm">
+                + Créer une nouvelle fiche
+            </a>
+        </div>
+
+        <!-- Carte & Tableau Bootstrap -->
+        <div class="card shadow-lg border-0 rounded-3 overflow-hidden" style="background-color: #2d4a3e;">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-white border-0">
+                    <thead style="background-color: #14281d;">
+                        <tr class="text-uppercase small" style="color: #a7f3d0;">
+                            <th class="ps-3 py-3" style="width: 80px;">#ID</th>
+                            <th class="py-3">Produit</th>
+                            <th class="py-3">Auteur</th>
+                            <th class="py-3 text-center">Composants</th>
+                            <th class="py-3 text-end">Quantité Totale</th>
+                            <th class="py-3">Date de Création</th>
+                            <th class="py-3 text-center" style="width: 150px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                    {% for fiche_production in fiche_productions %}
+                        <tr style="border-bottom-color: #3d6352;">
+                            <td class="ps-3 fw-bold opacity-75">{{ fiche_production.id }}</td>
+                            <td>
+                                {% if fiche_production.produit %}
+                                    <span class="badge text-dark fw-bold px-3 py-2" style="background-color: #d8f3dc;">
+                                        {{ fiche_production.produit.nom }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-white-50 fst-italic">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if fiche_production.user %}
+                                    {{ fiche_production.user.username ?? fiche_production.user.email }}
+                                {% else %}
+                                    <span class="text-white-50 fst-italic">Inconnu</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge text-dark px-3 py-2 rounded-pill" style="background-color: #52b788;">
+                                    {{ fiche_production.lignes|length }} composant(s)
+                                </span>
+                            </td>
+                            <td class="text-end fw-bold" style="color: #74c69d;">
+                                {{ fiche_production.totalQuantite|number_format(2, ',', ' ') }}
+                            </td>
+                            <td>
+                                {{ fiche_production.createdAt ? fiche_production.createdAt|date('d/m/Y H:i') : '-' }}
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ path('app_fiche_production_show', {'id': fiche_production.id}) }}" class="btn btn-primary">
+                                        Voir
+                                    </a>
+                                    <a href="{{ path('app_fiche_production_edit', {'id': fiche_production.id}) }}" class="btn btn-warning fw-semibold">
+                                        Modifier
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-white-50">
+                                Aucune fiche de production enregistrée pour le moment.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

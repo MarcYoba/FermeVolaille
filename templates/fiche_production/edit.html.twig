@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Fiche de Production #{{ fiche_production.id }}{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<div class="min-vh-100 py-4" style="background-color: #1b3b2b;">
+    <div class="container">
+        <!-- En-tête -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 text-white m-0 fw-bold">
+                Modifier la Fiche de Production #{{ fiche_production.id }}
+            </h1>
+            <a href="{{ path('app_fiche_production_index') }}" class="btn btn-outline-light">
+                &larr; Retour à la liste
+            </a>
+        </div>
+
+        <!-- Carte Formulaire -->
+        <div class="card shadow-lg border-0 rounded-3 overflow-hidden mb-4" style="background-color: #2d4a3e;">
+            <div class="card-header text-uppercase small fw-bold py-3" style="background-color: #14281d; color: #a7f3d0;">
+                Mettre à jour les informations
+            </div>
+            <div class="card-body p-4 text-white">
+                {{ include('fiche_production/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+            </div>
+        </div>
+
+        <!-- Zone d'actions inférieures (Suppression) -->
+        <div class="d-flex justify-content-between align-items-center pt-2">
+            <a href="{{ path('app_fiche_production_show', {'id': fiche_production.id}) }}" class="btn btn-outline-info">
+                Consulter la fiche
+            </a>
+            
+            <div class="delete-action-wrapper">
+                {{ include('fiche_production/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

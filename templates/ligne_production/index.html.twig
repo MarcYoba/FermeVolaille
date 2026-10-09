@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LigneProduction index{% endblock %}
+
+{% block body %}
+    <h1>LigneProduction index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Quantite</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ligne_production in ligne_productions %}
+            <tr>
+                <td>{{ ligne_production.id }}</td>
+                <td>{{ ligne_production.quantite }}</td>
+                <td>
+                    <a href="{{ path('app_ligne_production_show', {'id': ligne_production.id}) }}">show</a>
+                    <a href="{{ path('app_ligne_production_edit', {'id': ligne_production.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_ligne_production_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LigneProduction{% endblock %}
+
+{% block body %}
+    <h1>LigneProduction</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ ligne_production.id }}</td>
+            </tr>
+            <tr>
+                <th>Quantite</th>
+                <td>{{ ligne_production.quantite }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_ligne_production_index') }}">back to list</a>
+
+    <a href="{{ path('app_ligne_production_edit', {'id': ligne_production.id}) }}">edit</a>
+
+    {{ include('ligne_production/_delete_form.html.twig') }}
+{% endblock %}

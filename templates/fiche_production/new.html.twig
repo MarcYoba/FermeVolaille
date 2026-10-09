@@ -1,0 +1,204 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une Fiche de Production{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title mb-0">Nouvelle Fiche de Production</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+
+                <!-- SECTION HAUTE : Produit, Quantité, Date -->
+                <div class="row g-3 mb-3 align-items-end">
+                    <div class="col-md-4">
+                        {{ form_label(form.produit) }}
+                        {{ form_widget(form.produit) }}
+                        {{ form_errors(form.produit) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_label(form.quantiteSaisie) }}
+                        {{ form_widget(form.quantiteSaisie) }}
+                        {{ form_errors(form.quantiteSaisie) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_label(form.createdAt) }}
+                        {{ form_widget(form.createdAt) }}
+                        {{ form_errors(form.createdAt) }}
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-success w-100" id="add-line-btn">
+                            <i class="bi bi-plus-circle"></i> Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- SECTION BASSE : Tableau des composants -->
+                <h5 class="mb-3">Liste des Composants</h5>
+                <table class="table table-bordered align-middle" id="tableau-production">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nom du composant</th>
+                            <th style="width: 200px;">Quantité</th>
+                            <th style="width: 60px;" class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lignes-container"
+                           data-prototype="{{ form_widget(form.lignes.vars.prototype)|e('html_attr') }}"
+                           data-index="{{ form.lignes|length }}">
+                        {% for ligneForm in form.lignes %}
+                            <tr class="ligne-row">
+                                <td>{{ form_widget(ligneForm.nom) }}</td>
+                                <td>{{ form_widget(ligneForm.quantite) }}</td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-line">&times;</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold table-secondary">
+                            <td>Total calculé</td>
+                            <td id="total-quantite">0.00</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Champ Quantité Totale -->
+                <div class="row my-3">
+                    <div class="col-md-4 ms-auto">
+                        {{ form_label(form.quantiteTotale) }}
+                        {{ form_widget(form.quantiteTotale) }}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary px-4">
+                        {{ button_label|default('Enregistrer la fiche') }}
+                    </button>
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('lignes-container');
+    const addBtn = document.getElementById('add-line-btn');
+    const selectProduit = document.getElementById('fiche_production_produit');
+    const inputQuantite = document.getElementById('fiche_production_quantiteSaisie');
+    const totalEl = document.getElementById('fiche_production_quantiteTotale');
+    const inputTotal = document.getElementById('{{ form.quantiteTotale.vars.id }}');
+
+    // Recalcule le total global de toutes les lignes
+    function calculateTotal() {
+        let total = 0;
+        document.querySelectorAll('.quantite-input').forEach(input => {
+            const val = parseFloat(input.value) || 0;
+            total += val;
+        });
+
+        const formattedTotal = total.toFixed(2);
+        totalEl.textContent = formattedTotal;
+
+        if (inputTotal) {
+            inputTotal.value = formattedTotal;
+        }
+    }
+
+    function addRow() {
+    const produitText = selectProduit.options[selectProduit.selectedIndex]?.text || '';
+    const quantiteVal = inputQuantite.value.trim();
+
+    // Validation des champs supérieurs
+    if (!selectProduit.value || produitText.startsWith('--')) {
+        alert('Veuillez sélectionner un produit.');
+        return;
+    }
+
+    if (!quantiteVal || isNaN(quantiteVal) || parseFloat(quantiteVal) <= 0) {
+        alert('Veuillez saisir une quantité valide.');
+        return;
+    }
+
+    const index = container.dataset.index;
+    const prototype = container.dataset.prototype;
+
+    // Génération du HTML depuis le prototype Symfony
+    const newFormHtml = prototype.replace(/__name__/g, index);
+    container.dataset.index = parseInt(index) + 1;
+
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = newFormHtml;
+
+    // Sélection ciblée par l'attribut name du prototype Symfony
+    const nomInput = tempDiv.querySelector(`[name*="[nom]"]`);
+    const quantiteInput = tempDiv.querySelector(`[name*="[quantite]"]`);
+
+    // Sécurité au cas où les sélecteurs ne trouvent pas les champs
+    if (!nomInput || !quantiteInput) {
+        console.error("Impossible de trouver les champs 'nom' ou 'quantite' dans le prototype Symfony.");
+        return;
+    }
+    //console.log(produitText);
+    // Affectation des valeurs
+    nomInput.value = produitText;
+    quantiteInput.value = quantiteVal;
+
+    // Ajout d'une classe pour identifier facilement le champ lors du calcul du total
+    quantiteInput.classList.add('quantite-input');
+
+    const tr = document.createElement('tr');
+    tr.className = 'ligne-row';
+
+    tr.innerHTML = `
+        <td></td>
+        <td></td>
+        <td class="text-center">
+            <button type="button" class="btn btn-sm btn-outline-danger remove-line">&times;</button>
+        </td>
+    `;
+
+    // Insertion des inputs dans les cellules du tableau
+    tr.children[0].appendChild(nomInput);
+    tr.children[1].appendChild(quantiteInput);
+
+    container.appendChild(tr);
+
+    // Écouteur pour la mise à jour dynamique du total
+    quantiteInput.addEventListener('input', calculateTotal);
+
+    // Réinitialisation des champs de saisie du haut
+    selectProduit.selectedIndex = 0;
+    inputQuantite.value = '';
+
+    calculateTotal();
+}
+    addBtn.addEventListener('click', addRow);
+
+    // Suppression d'une ligne
+    container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-line')) {
+            e.target.closest('tr').remove();
+            calculateTotal();
+        }
+    });
+
+    // Attacher l'écouteur sur les lignes déjà existantes (s'il y en a)
+    document.querySelectorAll('.quantite-input').forEach(input => {
+        input.addEventListener('input', calculateTotal);
+    });
+
+    calculateTotal();
+});
+</script>
+{% endblock %}

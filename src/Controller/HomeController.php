@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\FicheProduction;
 use App\Entity\Sortie;
 use App\Repository\SuiviRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -106,6 +107,8 @@ final class HomeController extends AbstractController
         ->getResult();
 
         $dernieresSorties = $em->getRepository(Sortie::class)->findBy([], ['dateSortie' => 'DESC'], 5);
+        $ficheProductions = $em->getRepository(FicheProduction::class)->findAll();
+
 
         // 6. Rendu du template Twig
         return $this->render('home/index.html.twig', [
@@ -117,6 +120,7 @@ final class HomeController extends AbstractController
             'medicamentsAlerteStock' => $medicamentsAlerteStock,
             'dernieresSorties'       => $dernieresSorties,
             'is_webview'             => $isWebView,
+            'dernieresProductions'   => $ficheProductions,
         ]);
     }
 
@@ -212,6 +216,7 @@ final class HomeController extends AbstractController
         ->getResult();
 
         $dernieresSorties = $em->getRepository(Sortie::class)->findBy([], ['dateSortie' => 'DESC'], 5);
+        $ficheProductions = $em->getRepository(FicheProduction::class)->findAll();
 
         // 6. Rendu du template Twig
         return $this->render('home/gestionnaire.html.twig', [
@@ -223,6 +228,7 @@ final class HomeController extends AbstractController
             'medicamentsAlerteStock' => $medicamentsAlerteStock,
             'dernieresSorties'       => $dernieresSorties,
             'is_webview'             => $isWebView,
+            'dernieresProductions'   => $ficheProductions,
         ]);
     }
 }

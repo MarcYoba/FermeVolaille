@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit LigneProduction{% endblock %}
+
+{% block body %}
+    <h1>Edit LigneProduction</h1>
+
+    {{ include('ligne_production/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_ligne_production_index') }}">back to list</a>
+
+    {{ include('ligne_production/_delete_form.html.twig') }}
+{% endblock %}
