@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class MagasinController extends AbstractController
 {
-    #[Route('/admin/magasin/create', name: 'app_magasin')]
+    #[Route('/gestionnaire/magasin/create', name: 'app_magasin')]
     public function index(EntityManagerInterface $em, Request $request): Response
     {
         $magasin = new Magasin();
@@ -42,7 +42,7 @@ final class MagasinController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/magasin/list', name: 'app_magasin_list')]
+    #[Route('/gestionnaire/magasin/list', name: 'app_magasin_list')]
     public function list(EntityManagerInterface $em): Response
     {
         $magasin = $em->getRepository(Magasin::class)->findAll();
