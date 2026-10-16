@@ -33,7 +33,7 @@ class AchatType extends AbstractType
             ->add('montant', NumberType::class,[
                 'label' => 'Montant du produit',
                 'attr' => [
-                    'placeholder' => 'Mnontant du produit',
+                    'placeholder' => 'Montant du produit',
                     'class' => 'form-control',
                 ],
             ])
@@ -41,7 +41,8 @@ class AchatType extends AbstractType
                 'label' => 'Date du jour',
                 'widget' => 'single_text',
                 'attr' => [
-                    'placeholder' => 'Description du produit',
+                    'placeholder' => 'Date du jour',
+                    'value' => (new \DateTime())->format('Y-m-d'),
                     'class' => 'form-control',
                 ],
             ])
