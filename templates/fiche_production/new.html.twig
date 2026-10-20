@@ -4,7 +4,20 @@
 
 {% block body %}
 {% include "navbar.html.twig" %}
-
+{# 💡 MANUEL D'UTILISATION (Discret, informatif et fermable) #}
+            <div class="alert alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background-color: #e2f0ed; color: #0d382b;">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle fa-2x me-3" style="color: #1b4d3e;"></i>
+                <div>
+                  <h6 class="alert-heading mb-1" style="font-weight: bold;">Manuel d'utilisation</h6>
+                  <p class="mb-0" style="font-size: 0.85rem;">
+                    Sélectionnez le produit concerné, renseignez la quantité exacte et validez l'enregistrement. 
+                    Apres validation la quantite sera deduite automatique du stock.
+                  </p>
+                </div>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
 <div class="container mt-4">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">

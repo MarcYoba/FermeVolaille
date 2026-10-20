@@ -1,1 +1,12 @@
-{}
+{
+  "dependencies": {
+    "jquery": "^4.0.0"
+    
+  },
+  "scripts": {
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production"
+  }
+  
+}

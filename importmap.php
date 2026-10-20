@@ -45,4 +45,27 @@ return [
         'version' => '7.3.1',
         'type' => 'css',
     ],
+    'jquery' => [
+        'version' => '4.0.0',
+    ],
+    'datatables.net' => [
+        'version' => '3.1.4',
+    ],
+    'datatables.net-dt' => [
+        'version' => '3.1.4',
+    ],
+    'datatables.net-dt/css/dataTables.dataTables.min.css' => [
+        'version' => '3.1.4',
+        'type' => 'css',
+    ],
+    'datatables.net-fixedheader-dt' => [
+        'version' => '5.1.2',
+    ],
+    'datatables.net-fixedheader' => [
+        'version' => '5.1.2',
+    ],
+    'datatables.net-fixedheader-dt/css/fixedHeader.dataTables.min.css' => [
+        'version' => '5.1.2',
+        'type' => 'css',
+    ],
 ];

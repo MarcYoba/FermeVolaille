@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\FicheProduction;
 use App\Entity\LigneProduction;
+use App\Entity\Magasin;
 use App\Entity\Produit;
 use App\Form\FicheProductionType;
 use App\Repository\FicheProductionRepository;
@@ -56,6 +57,12 @@ final class FicheProductionController extends AbstractController
                 // Récupération de la valeur saisie dans [name*="[nom]"]
                 $nomSaisi = $ligneForm->get('nom')->getData();
                 $produit = $entityManager->getRepository(Produit::class)->findOneBy(['nom' => $nomSaisi]);
+                $quantite = $ligne->getQuantite();
+
+                $magasin = $entityManager->getRepository(Magasin::class)->findOneBy(['produit' => $produit]);
+                $qtproduit = $magasin->getQuantite();
+
+                $magasin->setQuantite($qtproduit - $quantite);
 
                 if ($nomSaisi) {
                     $ligne->setProduit($produit); // Affectation à l'entité
@@ -63,7 +70,9 @@ final class FicheProductionController extends AbstractController
 
                 // Association obligatoire de la ligne à la fiche principale
                 $ligne->setFicheProduction($ficheProduction);
+                $entityManager->persist($magasin);
             }
+
             $ficheProduction->setUser($this->getUser());
             $entityManager->persist($ficheProduction);
             $entityManager->flush();
