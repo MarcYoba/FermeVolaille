@@ -17,7 +17,7 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $quantiteSortie = null;
+    private ?float $quantiteSortie = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateSortie = null;
@@ -50,12 +50,12 @@ class Sortie
         return $this->id;
     }
 
-    public function getQuantiteSortie(): ?int
+    public function getQuantiteSortie(): ?float
     {
         return $this->quantiteSortie;
     }
 
-    public function setQuantiteSortie(int $quantiteSortie): static
+    public function setQuantiteSortie(float $quantiteSortie): static
     {
         $this->quantiteSortie = $quantiteSortie;
 

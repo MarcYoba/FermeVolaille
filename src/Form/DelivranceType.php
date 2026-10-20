@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -51,7 +52,16 @@ class DelivranceType extends AbstractType
                 },
                 'placeholder' => '-- Sélectionner le lot en stock --',
             ])
-            ->add('quantiteSortie', IntegerType::class, ['label' => 'Quantité délivrée'])
+            ->add('quantiteSortie', NumberType::class, [
+                'label' => 'Quantité délivrée',
+                'scale' => 2, // 👈 Nombre de décimales autorisées (ex: 0.30, 1.50)
+                'html5' => true, // 👈 Permet au champ HTML5 d'accepter les décimales dans le navigateur
+                'attr' => [
+                    'class' => 'form-control form-control-lg',
+                    'step' => '0.01', // 👈 Permet la saisie des décimales dans le navigateur (ex: 0,1 ou 0,01)
+                    'placeholder' => 'Ex: 0.3 ou 1.5'
+                ]
+            ])
             ->add('motifSortie', ChoiceType::class, [
                 'choices' => [
                     'Prescription médicale' => 'Prescription',
@@ -63,16 +73,43 @@ class DelivranceType extends AbstractType
             ])
 
             // 3. Coût Sanitaire
-            ->add('montantBrut', MoneyType::class, ['currency' => 'XAF', 'label' => 'Montant total brut'])
-            ->add('partAssurances', MoneyType::class, ['currency' => 'XAF', 'label' => 'Prise en charge Assurances/Mutuelle'])
-            ->add('partPatient', MoneyType::class, ['currency' => 'XAF', 'label' => 'Reste à charge patient'])
-            ->add('statutPaiement', ChoiceType::class, [
-                'choices' => [
-                    'Payé' => 'Payé',
-                    'En attente' => 'En attente',
-                    'Tiers Payant' => 'Tiers Payant',
-                ],
-            ]);
+            // ->add('montantBrut', MoneyType::class, [
+            //     'currency' => 'XAF',
+            //     'label' => 'Montant total brut',
+            //     'attr' => [
+            //         'class' => 'form-control form-control-lg',
+            //         'placeholder' => 'Ex: 5000'
+            //     ]
+            // ])
+            // ->add('partAssurances', MoneyType::class, [
+            //     'currency' => 'XAF',
+            //     'label' => 'Prise en charge Assurances/Mutuelle',
+            //     'attr' => [
+            //         'class' => 'form-control form-control-lg',
+            //         'placeholder' => 'Ex: 0'
+            //     ]
+            // ])
+            // ->add('partPatient', MoneyType::class, [
+            //     'currency' => 'XAF',
+            //     'label' => 'Reste à charge patient',
+            //     'attr' => [
+            //         'class' => 'form-control form-control-lg',
+            //         'placeholder' => 'Ex: 5000'
+            //     ]
+            // ])
+            // ->add('statutPaiement', ChoiceType::class, [
+            //     'label' => 'Statut du paiement',
+            //     'choices' => [
+            //         'Payé' => 'Payé',
+            //         'En attente' => 'En attente',
+            //         'Tiers Payant' => 'Tiers Payant',
+            //     ],
+            //     'placeholder' => 'Sélectionnez un statut...',
+            //     'attr' => [
+            //         'class' => 'form-select form-select-lg' // Note: form-select est recommandé pour les menus déroulants Bootstrap
+            //     ]
+            // ])
+    ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

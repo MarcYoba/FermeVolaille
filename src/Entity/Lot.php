@@ -20,7 +20,7 @@ class Lot
     private ?\DateTimeInterface $dateExpiration = null;
 
     #[ORM\Column]
-    private ?int $quantiteEnStock = 0;
+    private ?float $quantiteEnStock = 0;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $prixAchatUnitaire = null;
@@ -67,12 +67,12 @@ class Lot
         return $this;
     }
 
-    public function getQuantiteEnStock(): ?int
+    public function getQuantiteEnStock(): ?float
     {
         return $this->quantiteEnStock;
     }
 
-    public function setQuantiteEnStock(int $quantiteEnStock): static
+    public function setQuantiteEnStock(float $quantiteEnStock): static
     {
         $this->quantiteEnStock = $quantiteEnStock;
 
