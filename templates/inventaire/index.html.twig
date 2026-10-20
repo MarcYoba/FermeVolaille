@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Inventaires{% endblock %}
+
+{% block body %}
+{% include "navbar.html.twig" %}
+
+<div class="min-vh-100 py-4" style="background-color: #1b4d3e;">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-xl-11">
+        
+        {# Carte principale #}
+        <div class="card shadow-lg border-0" style="border-radius: 1rem; overflow: hidden;">
+          <div class="p-4 p-md-5" style="background-color: #f4f8f6;">
+            
+            {# En-tête avec titre et bouton de création #}
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h3 class="mb-0" style="color: #1b4d3e; font-weight: bold;">
+                <i class="fas fa-clipboard-list me-2"></i>Liste des Inventaires
+              </h3>
+              <a href="{{ path('app_inventaire_new') }}" class="btn text-white shadow-sm" style="background-color: #1b4d3e; border-color: #1b4d3e;">
+                <i class="fas fa-plus-circle me-1"></i> Créer un inventaire
+              </a>
+            </div>
+
+            <hr class="mb-4" style="color: #1b4d3e; opacity: 0.2;">
+
+            {# Tableau DataTables #}
+            <div class="table-responsive">
+              <table class="table table-hover align-middle bg-white rounded shadow-sm" id="tableactif">
+                <thead class="table-dark" style="background-color: #1b4d3e;">
+                  <tr>
+                    <th style="background-color: #1b4d3e; color: white;">Id</th>
+                    <th style="background-color: #1b4d3e; color: white;">Quantité</th>
+                    <th style="background-color: #1b4d3e; color: white;">Date de création</th>
+                    <th class="text-center" style="background-color: #1b4d3e; color: white;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for inventaire in inventaires %}
+                    <tr>
+                        <td class="fw-bold">{{ inventaire.id }}</td>
+                        <td>{{ inventaire.quantite }}</td>
+                        <td>{{ inventaire.createtAt ? inventaire.createtAt|date('Y-m-d') : '' }}</td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a href="{{ path('app_inventaire_show', {'id': inventaire.id}) }}" class="btn btn-sm btn-outline-info me-1" title="Voir">
+                                    <i class="fas fa-eye"></i> Voir
+                                </a>
+                                <a href="{{ path('app_inventaire_edit', {'id': inventaire.id}) }}" class="btn btn-sm btn-outline-warning" title="Modifier">
+                                    <i class="fas fa-edit"></i> Éditer
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">Aucun inventaire trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

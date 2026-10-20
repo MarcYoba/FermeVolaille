@@ -4,76 +4,91 @@
 
 {% block body %}
 {% include "navbar.html.twig" %}
-<section class="vh-100" style="background-color: #9A616D;">
-  <div class="container py-5 h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
+<div class="min-vh-100 py-4" style="background-color: #1b4d3e;">
+  <div class="container">
+    <div class="row d-flex justify-content-center align-items-center">
       <div class="col col-xl-10">
-        <div class="card" style="border-radius: 1rem;">
+        <div class="card shadow-lg border-0" style="border-radius: 1rem; overflow: hidden;">
           
-          {# Deuxième section (formulaire) emboîtée correctement #}
-          <section class="h-100 gradient-form" style="background-color: #eee; border-radius: 1rem;">
-            <div class="container py-5 h-100">
-              <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col-xl-12">
-                  <div class="card rounded-3 text-black">
-                    
-                      
-                      {# Colonne Formulaire #}
-                      <div class="col-lg-12">
-                        <div class="card-body p-md-5 mx-md-4">
-                          <h3 class="text-center">Information du Magasin </h3>
-                          {{ form_errors(form) }}
+          {# Deuxième section (formulaire) #}
+          <div class="gradient-form p-4 p-md-5" style="background-color: #f4f8f6;">
+            <div class="row d-flex justify-content-center align-items-center">
+              <div class="col-xl-12">
+                <div class="card rounded-3 text-black border-0 shadow-sm p-4">
+                  
+                  <h3 class="text-center mb-4" style="color: #1b4d3e; font-weight: bold;">Information du Magasin</h3>
 
-                          {{ form_start(form) }}
-                            <div class="form-group row">
-                              <div data-mdb-input-init class="form-outline  col-md-6">
-                              {{ form_label(form.produit) }}
-                              <input type="text" id="recherche" onkeyup="magasin()" class="form-control form-control-lg" placeholder="Rechercher un Produit...">
-                              {{ form_widget(form.produit, {
-                                'attr': {
-                                    'size': 4,
-                                }
-                              }) }}
-                              </div>
-                              <div data-mdb-input-init class="form-outline  col-md-6">
-                                {{ form_label(form.quantite) }}
-                                {{ form_widget(form.quantite) }}
-                              </div>
-                              <div data-mdb-input-init class="form-outline  col-md-6">
-                                {{ form_label(form.prix) }}
-                                {{ form_widget(form.prix) }}
-                              </div>
-                              <div data-mdb-input-init class="form-outline  col-md-6">
-                                {{ form_label(form.montant) }}
-                                {{ form_widget(form.montant) }}
-                              </div>
-                              <div data-mdb-input-init class="form-outline  col-md-6">
-                              {{ form_label(form.createtAt) }}
-                                {{ form_widget(form.createtAt) }}
-                              </div>
-                              
-                            </div>
-                            
-                            <br>
-                            <div class="text-center pt-1 mb-5 pb-1">
-                              <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="submit" >
-                                Enregistrement
-                              </button>
-                            </div>
-
-                          {{ form_end(form) }}
-
-                        </div>
+                  {# 💡 MESSAGE D'AIDE DISCRET ET FERMABLE #}
+                  <div class="alert alert-info alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background-color: #e2f0ed; color: #0d382b;">
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-info-circle fa-2x me-3" style="color: #1b4d3e;"></i>
+                      <div>
+                        <h5 class="alert-heading mb-1" style="font-size: 1rem; font-weight: bold;">Guide d'utilisation</h5>
+                        <p class="mb-0" style="font-size: 0.9rem;">
+                          Utilisez la barre de recherche pour filtrer un produit rapidement, puis remplissez les champs obligatoires (quantité, prix) avant d'enregistrer. 
+                          Apres engistrement le produit est ajouter au stock restant en machine dans list magasin. 
+                        </p>
                       </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                   </div>
+
+                  {{ form_errors(form) }}
+
+                  {{ form_start(form) }}
+                    <div class="form-group row g-3">
+                      <div data-mdb-input-init class="form-outline col-md-6">
+                        {{ form_label(form.produit) }}
+                        <input type="text" id="recherche" onkeyup="Achat()" class="form-control form-control-lg mb-2" placeholder="Rechercher un Produit...">
+                        {{ form_widget(form.produit, {
+                          'attr': {
+                              'size': 4,
+                              'class': 'form-control'
+                          }
+                        }) }}
+                      </div>
+                      <div data-mdb-input-init class="form-outline col-md-6">
+                        {{ form_label(form.quantite) }}
+                        {{ form_widget(form.quantite, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                      <div data-mdb-input-init class="form-outline col-md-6">
+                        {{ form_label(form.prix) }}
+                        {{ form_widget(form.prix, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                      <div data-mdb-input-init class="form-outline col-md-6">
+                        {{ form_label(form.montant) }}
+                        {{ form_widget(form.montant, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                      <div data-mdb-input-init class="form-outline col-md-6">
+                        {{ form_label(form.createtAt) }}
+                        {{ form_widget(form.createtAt, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                    </div>
+                    
+                    <br>
+                    {# Bouton Enregistrement #}
+                    <div class="row justify-content-center pt-2 mb-2">
+                      <div class="col-md-6">
+                        <button class="btn btn-lg w-100 text-white shadow-sm" type="submit" style="background-color: #1b4d3e; border-color: #1b4d3e; font-weight: 500;">
+                          <i class="fas fa-save me-2"></i> Enregistrement
+                        </button>
+                      </div>
+                    </div>
+
+                  {{ form_end(form) }}
+
                 </div>
               </div>
             </div>
-          </section>
+          </div>
 
         </div>
       </div>
     </div>
   </div>
-</section>
+</div>
+<script src="{{ asset('js/recherche/recherche.js')}}"></script>
 {% endblock %}
+{# {% block javascripts %}
+    
+{% endblock %} #}

@@ -177,6 +177,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: FicheProduction::class, mappedBy: 'user')]
     private Collection $ficheProductions;
 
+    /**
+     * @var Collection<int, Inventaire>
+     */
+    #[ORM\OneToMany(targetEntity: Inventaire::class, mappedBy: 'user')]
+    private Collection $inventaires;
+
     public function __construct()
     {
         $this->fermes = new ArrayCollection();
@@ -201,6 +207,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->vaccinations = new ArrayCollection();
         $this->transfertBatiments = new ArrayCollection();
         $this->ficheProductions = new ArrayCollection();
+        $this->inventaires = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -974,6 +981,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($ficheProduction->getUser() === $this) {
                 $ficheProduction->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Inventaire>
+     */
+    public function getInventaires(): Collection
+    {
+        return $this->inventaires;
+    }
+
+    public function addInventaire(Inventaire $inventaire): static
+    {
+        if (!$this->inventaires->contains($inventaire)) {
+            $this->inventaires->add($inventaire);
+            $inventaire->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInventaire(Inventaire $inventaire): static
+    {
+        if ($this->inventaires->removeElement($inventaire)) {
+            // set the owning side to null (unless already changed)
+            if ($inventaire->getUser() === $this) {
+                $inventaire->setUser(null);
             }
         }
 

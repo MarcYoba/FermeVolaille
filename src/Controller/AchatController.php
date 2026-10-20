@@ -94,7 +94,7 @@ final class AchatController extends AbstractController
             return $this->redirectToRoute('app_achat_list');
         }
 
-        $em->persist($achat);
+        $em->remove($achat);
         $em->flush();
 
         return $this->redirectToRoute('app_achat_list');
