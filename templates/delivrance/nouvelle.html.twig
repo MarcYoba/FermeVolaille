@@ -5,6 +5,23 @@
 {% block body %}
 {% include "navbar.html.twig" %}
 <div class="container my-5">
+    {# 💡 MANUEL D'UTILISATION (Discret, informatif et fermable) #}
+            <div class="alert alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background-color: #e2f0ed; color: #0d382b;">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle fa-2x me-3" style="color: #1b4d3e;"></i>
+                <div>
+                  <h6 class="alert-heading mb-1" style="font-weight: bold;">Manuel d'utilisation</h6>
+                  <p class="mb-0" style="font-size: 0.85rem;">
+                    <strong>Instructions :</strong> Sélectionnez le produit et le stock concerné, puis renseignez la quantité :
+                    <br>• <strong>1)</strong> La quantité saisie ne doit pas dépasser le stock disponible (sinon le système rejettera la demande).
+                    <br>• <strong>2)</strong> Pour les quantités en <strong>KG</strong> : inscrivez le chiffre normalement (ex: <code>1</code> pour 1 kg).
+                    <br>• <strong>3)</strong> Pour les quantités en <strong>grammes (g)</strong> : convertissez en kg en divisant par 1000 (ex: <code>0,3</code> pour 300g)= 300/1000.
+                    <br>Cliquez ensuite sur enregistrer. Vous pouvez fermer ce message à l'aide de la croix.
+                </p>
+                </div>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
     {# En-tête de la page #}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -89,7 +106,7 @@
                     <div class="row g-3 mt-2">
                         <div class="col-md-6">
                             {{ form_label(form.quantiteSortie, 'Quantité délivrée', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.quantiteSortie, {'attr': {'class': 'form-control', 'min': '1'}}) }}
+                            {{ form_widget(form.quantiteSortie, {'attr': {'class': 'form-control'}}) }}
                             {{ form_errors(form.quantiteSortie) }}
                         </div>
 

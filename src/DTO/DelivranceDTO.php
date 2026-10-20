@@ -22,7 +22,7 @@ class DelivranceDTO
 
     #[Assert\NotBlank(message: "La quantité est obligatoire.")]
     #[Assert\Positive(message: "La quantité doit être supérieure à 0.")]
-    public ?int $quantiteSortie = 1;
+    public ?float $quantiteSortie = 0.3;
 
     public string $motifSortie = 'Prescription';
 
